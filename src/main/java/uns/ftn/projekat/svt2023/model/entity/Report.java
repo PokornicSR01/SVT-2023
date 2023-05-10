@@ -1,35 +1,34 @@
-package uns.ftn.projekat.svt2023.model;
-
+package uns.ftn.projekat.svt2023.model.entity;
 
 import lombok.*;
+import uns.ftn.projekat.svt2023.model.enums.*;
 
 import javax.persistence.*;
 import java.time.*;
 
 @Entity
-@Table(name = "comment")
+@Table(name = "report")
 @NoArgsConstructor
 @Getter
 @Setter
-public class Comment {
-
+public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column
-    private String text;
+    private ReportReason reason;
     @Column
     private LocalDateTime timeStamp;
     @Column
-    private Boolean isDeleted;
+    private Boolean accepted;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User belongsTo;
 
-    public Comment(Integer id, String text, LocalDateTime timeStamp, Boolean isDeleted) {
+    public Report(Integer id, ReportReason reason, LocalDateTime timeStamp, Boolean accepted) {
         this.id = id;
-        this.text = text;
+        this.reason = reason;
         this.timeStamp = timeStamp;
-        this.isDeleted = isDeleted;
+        this.accepted = accepted;
     }
 }

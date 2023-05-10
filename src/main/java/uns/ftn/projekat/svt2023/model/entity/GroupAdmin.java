@@ -1,4 +1,4 @@
-package uns.ftn.projekat.svt2023.model;
+package uns.ftn.projekat.svt2023.model.entity;
 
 import lombok.*;
 

@@ -1,7 +1,7 @@
-package uns.ftn.projekat.svt2023.model;
+package uns.ftn.projekat.svt2023.model.entity;
 
 import lombok.*;
-import uns.ftn.projekat.svt2023.enums.*;
+import uns.ftn.projekat.svt2023.model.enums.*;
 
 import javax.persistence.*;
 import java.time.*;

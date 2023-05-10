@@ -1,4 +1,4 @@
-package uns.ftn.projekat.svt2023.enums;
+package uns.ftn.projekat.svt2023.model.enums;
 
 public enum ReactionType {
     LIKE,
