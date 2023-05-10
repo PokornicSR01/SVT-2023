@@ -2,6 +2,7 @@ package uns.ftn.projekat.svt2023.model.dto;
 
 import lombok.*;
 import uns.ftn.projekat.svt2023.model.entity.*;
+import uns.ftn.projekat.svt2023.model.enums.*;
 
 import javax.validation.constraints.*;
 
@@ -21,6 +22,8 @@ public class UserDTO {
     private String firstName;
     @NotBlank
     private String lastName;
+    @NotBlank
+    private Roles role;
 
     public UserDTO(User createdUser) {
         this.id = createdUser.getId();
@@ -28,6 +31,7 @@ public class UserDTO {
         this.email = createdUser.getEmail();
         this.firstName = createdUser.getFirstName();
         this.lastName = createdUser.getLastName();
+        this.role = createdUser.getRole();
     }
 
 }

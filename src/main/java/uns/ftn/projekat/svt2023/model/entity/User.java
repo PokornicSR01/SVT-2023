@@ -1,6 +1,7 @@
 package uns.ftn.projekat.svt2023.model.entity;
 
 import lombok.*;
+import uns.ftn.projekat.svt2023.model.enums.*;
 
 import javax.persistence.*;
 import java.time.*;
@@ -26,6 +27,8 @@ public class User {
     private String firstName;
     @Column(nullable = false)
     private String lastName;
+    @Column
+    private Roles role;
     @Column
     private LocalDateTime lastLogin;
     @OneToMany(fetch = FetchType.LAZY)
