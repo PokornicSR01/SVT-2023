@@ -1,5 +1,6 @@
 package uns.ftn.projekat.svt2023.model;
 
+import lombok.*;
 import org.hibernate.annotations.*;
 
 import javax.persistence.*;
@@ -9,8 +10,10 @@ import java.time.*;
 
 @Entity
 @Table(name = "banned")
+@NoArgsConstructor
+@Getter
+@Setter
 public class Banned {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -19,8 +22,4 @@ public class Banned {
     @ManyToOne(fetch = FetchType.EAGER)
     private Administrator administrator;
 
-    public Banned(){}
-    public Banned(LocalDateTime timeStamp) {
-        this.timeStamp = timeStamp;
-    }
 }

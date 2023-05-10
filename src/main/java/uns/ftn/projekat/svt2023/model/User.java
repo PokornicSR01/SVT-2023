@@ -23,11 +23,11 @@ public class User {
     @Column(nullable = false)
     private String email;
     @Column(nullable = false)
-    private LocalDateTime lastLogin;
-    @Column(nullable = false)
     private String firstName;
     @Column(nullable = false)
     private String lastName;
+    @Column
+    private LocalDateTime lastLogin;
     @OneToMany(fetch = FetchType.LAZY)
     private Set<Post> posts = new HashSet<Post>();
     @OneToMany(fetch = FetchType.LAZY)

@@ -1,12 +1,16 @@
 package uns.ftn.projekat.svt2023.model;
 
+import lombok.*;
+
 import javax.persistence.*;
 import java.time.*;
 
 @Entity
 @Table(name = "groupRequest")
+@NoArgsConstructor
+@Getter
+@Setter
 public class GroupRequest {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -17,7 +21,6 @@ public class GroupRequest {
     @Column
     private LocalDateTime at;
 
-    public GroupRequest() {}
     public GroupRequest(Integer id, Boolean approved, LocalDateTime created, LocalDateTime at) {
         this.id = id;
         this.approved = approved;

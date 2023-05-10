@@ -1,11 +1,15 @@
 package uns.ftn.projekat.svt2023.model;
 
+import lombok.*;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "image")
+@NoArgsConstructor
+@Getter
+@Setter
 public class Image {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -15,9 +19,9 @@ public class Image {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Image(){}
     public Image(Integer id, String path) {
         this.id = id;
         this.path = path;
     }
+
 }

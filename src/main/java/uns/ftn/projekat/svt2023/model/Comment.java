@@ -1,11 +1,16 @@
 package uns.ftn.projekat.svt2023.model;
 
 
+import lombok.*;
+
 import javax.persistence.*;
 import java.time.*;
 
 @Entity
 @Table(name = "comment")
+@NoArgsConstructor
+@Getter
+@Setter
 public class Comment {
 
     @Id
@@ -21,7 +26,6 @@ public class Comment {
     @JoinColumn(name = "user_id")
     private User belongsTo;
 
-    public Comment(){}
     public Comment(Integer id, String text, LocalDateTime timeStamp, Boolean isDeleted) {
         this.id = id;
         this.text = text;

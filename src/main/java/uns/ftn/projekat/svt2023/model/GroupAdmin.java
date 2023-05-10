@@ -1,11 +1,15 @@
 package uns.ftn.projekat.svt2023.model;
 
+import lombok.*;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "groupAdmin")
+@NoArgsConstructor
+@Getter
+@Setter
 public class GroupAdmin {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -13,6 +17,5 @@ public class GroupAdmin {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public GroupAdmin(){}
 
 }

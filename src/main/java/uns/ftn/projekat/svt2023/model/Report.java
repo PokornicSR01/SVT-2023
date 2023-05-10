@@ -1,5 +1,6 @@
 package uns.ftn.projekat.svt2023.model;
 
+import lombok.*;
 import uns.ftn.projekat.svt2023.enums.*;
 
 import javax.persistence.*;
@@ -7,8 +8,10 @@ import java.time.*;
 
 @Entity
 @Table(name = "report")
+@NoArgsConstructor
+@Getter
+@Setter
 public class Report {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -21,8 +24,6 @@ public class Report {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User belongsTo;
-
-    public Report(){}
 
     public Report(Integer id, ReportReason reason, LocalDateTime timeStamp, Boolean accepted) {
         this.id = id;
