@@ -42,7 +42,7 @@ public class UserController
 
     @PostMapping("/signup")
     public ResponseEntity<UserDTO> create (@RequestBody @Validated UserDTO newUser) {
-        User createdUser = userService.createUser(newUser);
+        User createdUser = userService.create(newUser);
 
         if(createdUser == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
@@ -67,18 +67,13 @@ public class UserController
         return ResponseEntity.ok(new UserTokenState(jwt, expiresIm));
     }
 
-//    @PutMapping("/changePassword")
-//    public ResponseEntity<UserDTO> changePassword(RequestBody userDTO){
-//        return null;
-//    }
-
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
         User user = userService.findOne(id);
 
         if(user != null) {
-            userService.remove(id);
+            userService.delete(id);
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return  new ResponseEntity<>(HttpStatus.NOT_FOUND);

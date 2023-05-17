@@ -18,7 +18,7 @@ public class Banned {
     private Integer id;
     @Column
     private LocalDateTime timeStamp;
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Administrator administrator;
+//    @ManyToOne(fetch = FetchType.EAGER)
+//    private Administrator administrator;
 
 }

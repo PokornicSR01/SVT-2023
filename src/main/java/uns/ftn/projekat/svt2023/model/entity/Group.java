@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.time.*;
 
 @Entity
-@Table(name = "group")
+@Table(name = "guild")
 @NoArgsConstructor
 @Getter
 @Setter

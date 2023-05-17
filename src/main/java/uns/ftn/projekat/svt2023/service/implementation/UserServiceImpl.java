@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
         return null;
     }
     @Override
-    public User createUser(UserDTO userDTO) {
+    public User create(UserDTO userDTO) {
 
         Optional<User> user = userRepository.findFirstByUsername(userDTO.getUsername());
 
@@ -58,6 +58,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id).orElseGet(null);
     }
     @Override
-    public void remove(Integer id) {userRepository.deleteById(id);}
+    public void delete(Integer id) {userRepository.deleteById(id);}
 
 }

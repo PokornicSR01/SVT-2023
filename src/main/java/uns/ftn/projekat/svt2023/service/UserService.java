@@ -6,10 +6,9 @@ import uns.ftn.projekat.svt2023.model.entity.*;
 import java.util.*;
 
 public interface UserService {
-
-    User findByUsername(String username);
-    User createUser(UserDTO userDTO);
+    User create(UserDTO userDTO);
+    void delete(Integer id);
     List<User> findAll();
     User findOne(Integer id);
-    void remove(Integer id);
+    User findByUsername(String username);
 }

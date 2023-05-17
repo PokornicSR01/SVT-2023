@@ -20,24 +20,7 @@ public class PostServiceImpl implements PostService {
     private UserService userService;
 
     @Override
-    public Post findByUser(String username) {
-        return null;
-    }
-
-    @Override
-    public Optional<Post> deletePost(Integer id) {
-        Optional<Post> deletedPost = postRepository.findById(id);
-
-        if(deletedPost == null) {
-            return null;
-        }
-        postRepository.deleteById(id);
-
-        return deletedPost;
-    }
-
-    @Override
-    public Post createPost(PostDTO postDTO) {
+    public Post create(PostDTO postDTO) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         LocalDateTime dateTime = LocalDateTime.parse(postDTO.getCreationDate(), formatter);
@@ -55,8 +38,20 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> findAll() {
-        return this.postRepository.findAll();
+    public Post save(Post post) {
+        return postRepository.save(post);
+    }
+
+    @Override
+    public Optional<Post> delete(Integer id) {
+        Optional<Post> deletedPost = postRepository.findById(id);
+
+        if(deletedPost == null) {
+            return null;
+        }
+        postRepository.deleteById(id);
+
+        return deletedPost;
     }
 
     @Override
@@ -65,7 +60,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post save(Post post) {
-        return postRepository.save(post);
+    public List<Post> findAll() {
+        return this.postRepository.findAll();
     }
+
+    @Override
+    public Post findByUser(String username) {
+        return null;
+    }
+
+
 }

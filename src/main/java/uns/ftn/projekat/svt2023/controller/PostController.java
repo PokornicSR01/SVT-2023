@@ -28,7 +28,7 @@ public class PostController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<PostDTO> create(@RequestBody PostDTO newPost) {
 
-        Post createdPost = postService.createPost(newPost);
+        Post createdPost = postService.create(newPost);
 
         if(createdPost == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
@@ -39,9 +39,15 @@ public class PostController {
         return new ResponseEntity<>(postDTO, HttpStatus.CREATED);
     }
 
+    @DeleteMapping()
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public void delete(@RequestParam Integer id) {
+        Optional<Post> deletedPost = postService.delete(id);
+    }
+
     @PutMapping (value = "{id}", consumes = "application/json")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<PostDTO> updatePost(@PathVariable("id") Integer id, @RequestBody PostDTO newPost) {
+    public ResponseEntity<PostDTO> update(@PathVariable("id") Integer id, @RequestBody PostDTO newPost) {
 
         Post post = postService.findOne(id);
 
@@ -55,16 +61,10 @@ public class PostController {
 
         return new ResponseEntity<>(new PostDTO(post), HttpStatus.CREATED);
     }
+
     @GetMapping("/all")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public List<Post> loadAll() {
         return this.postService.findAll();
     }
-
-    @DeleteMapping()
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public void delete(@RequestParam Integer id) {
-        Optional<Post> deletedPost = postService.deletePost(id);
-    }
-
 }
