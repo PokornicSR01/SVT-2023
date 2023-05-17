@@ -27,22 +27,22 @@ public class User {
     private String firstName;
     @Column(nullable = false)
     private String lastName;
-    @Column
+    @Column(nullable = false)
     private Roles role;
     @Column
     private LocalDateTime lastLogin;
-    @OneToMany(fetch = FetchType.LAZY)
-    private Set<Post> posts = new HashSet<Post>();
-    @OneToMany(fetch = FetchType.LAZY)
-    private Set<Reaction> reactions = new HashSet<Reaction>();
-    @OneToMany(fetch = FetchType.LAZY)
-    private Set<Comment> comments = new HashSet<Comment>();
-    @OneToMany(fetch = FetchType.LAZY)
-    private Set<Report> reports = new HashSet<Report>();
-    @OneToOne(fetch = FetchType.LAZY)
-    private Image image;
-    @OneToMany(fetch = FetchType.LAZY)
-    private Set<GroupAdmin> groupAdmins = new HashSet<GroupAdmin>();
+//    @OneToMany(fetch = FetchType.LAZY)
+//    private Set<Post> posts = new HashSet<Post>();
+//    @OneToMany(fetch = FetchType.LAZY)
+//    private Set<Reaction> reactions = new HashSet<Reaction>();
+//    @OneToMany(fetch = FetchType.LAZY)
+//    private Set<Comment> comments = new HashSet<Comment>();
+//    @OneToMany(fetch = FetchType.LAZY)
+//    private Set<Report> reports = new HashSet<Report>();
+//    @OneToOne(fetch = FetchType.LAZY)
+//    private Image image;
+//    @OneToMany(fetch = FetchType.LAZY)
+//    private Set<GroupAdmin> groupAdmins = new HashSet<GroupAdmin>();
 
     @Override
     public int hashCode(){return Objects.hashCode(id);}

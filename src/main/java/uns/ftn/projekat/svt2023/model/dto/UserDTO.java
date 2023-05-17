@@ -22,8 +22,6 @@ public class UserDTO {
     private String firstName;
     @NotBlank
     private String lastName;
-    @NotBlank
-    private Roles role;
 
     public UserDTO(User createdUser) {
         this.id = createdUser.getId();
@@ -31,7 +29,6 @@ public class UserDTO {
         this.email = createdUser.getEmail();
         this.firstName = createdUser.getFirstName();
         this.lastName = createdUser.getLastName();
-        this.role = createdUser.getRole();
     }
 
 }

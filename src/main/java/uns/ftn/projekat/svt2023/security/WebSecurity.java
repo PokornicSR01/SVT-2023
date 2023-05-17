@@ -15,10 +15,10 @@ public class WebSecurity {
     @Autowired
     private UserService userService;
 
-    public boolean chechUserId(Authentication authentication, HttpServletRequest request, int id) {
+    public boolean checkUserId(Authentication authentication, HttpServletRequest request, int id) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User user = userService.findByUsername((userDetails.getUsername()));
-        if(id == user.getId()){
+        User user = userService.findByUsername(userDetails.getUsername());
+        if(id == user.getId()) {
             return true;
         }
         return false;

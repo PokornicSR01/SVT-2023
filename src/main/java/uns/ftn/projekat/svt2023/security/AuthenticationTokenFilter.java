@@ -13,7 +13,7 @@ import java.io.*;
 
 public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
-    private UserDetailsService userDetailsService;
+    private  UserDetailsService userDetailsService;
 
     private TokenUtils tokenUtils;
 
@@ -28,14 +28,14 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String token = httpServletRequest.getHeader("Authorization");
         if(token != null){
-            if(token.startsWith("Bearer ")) {
+            if(token.startsWith("Bearer ")){
                 token = token.substring(7);
             }
         }
 
         String username = tokenUtils.getUsernameFromToken(token);
 
-        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
             if (tokenUtils.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(

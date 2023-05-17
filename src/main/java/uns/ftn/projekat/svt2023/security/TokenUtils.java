@@ -18,7 +18,7 @@ public class TokenUtils {
 
     public String getUsernameFromToken(String token) {
         String username;
-        try{
+        try {
             Claims claims = this.getClaimsFromToken(token);
             username = claims.getSubject();
         } catch (Exception e) {
@@ -70,6 +70,8 @@ public class TokenUtils {
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
 
-    public int getExpiredIn () {return expiration.intValue();}
+    public int getExpiredIn() {
+        return expiration.intValue();
+    }
 
 }

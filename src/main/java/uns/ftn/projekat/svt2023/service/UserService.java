@@ -10,5 +10,6 @@ public interface UserService {
     User findByUsername(String username);
     User createUser(UserDTO userDTO);
     List<User> findAll();
-
+    User findOne(Integer id);
+    void remove(Integer id);
 }
