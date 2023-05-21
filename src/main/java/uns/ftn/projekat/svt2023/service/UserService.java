@@ -7,6 +7,7 @@ import java.util.*;
 
 public interface UserService {
     User create(UserDTO userDTO);
+    void save(User user);
     void delete(Integer id);
     List<User> findAll();
     User findOne(Integer id);

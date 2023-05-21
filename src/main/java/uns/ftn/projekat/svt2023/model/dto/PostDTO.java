@@ -15,7 +15,6 @@ public class PostDTO {
     private Integer id;
     @NotBlank
     private String content;
-    @NotBlank
     private String creationDate;
     private String userUsername;
 

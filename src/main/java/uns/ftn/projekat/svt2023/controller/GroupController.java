@@ -25,7 +25,6 @@ public class GroupController {
     }
 
     @PostMapping("/create")
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<GroupDTO> create(@RequestBody GroupDTO newGroup) {
 
         Group createdGroup = groupService.create(newGroup);
@@ -40,7 +39,6 @@ public class GroupController {
     }
 
     @DeleteMapping()
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public void delete(@RequestParam Integer id) {
         Optional<Group> deletedGroup = groupService.delete(id);
     }
@@ -64,6 +62,5 @@ public class GroupController {
     }
 
     @GetMapping("/all")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public List<Group> loadAll() {return this.groupService.findAll();}
 }

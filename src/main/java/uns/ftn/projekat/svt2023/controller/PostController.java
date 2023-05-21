@@ -9,6 +9,7 @@ import uns.ftn.projekat.svt2023.model.entity.*;
 import uns.ftn.projekat.svt2023.repository.*;
 import uns.ftn.projekat.svt2023.service.*;
 
+import java.time.*;
 import java.util.*;
 
 @RestController
@@ -27,26 +28,23 @@ public class PostController {
     @PostMapping("/create")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<PostDTO> create(@RequestBody PostDTO newPost) {
-
+        LocalDateTime ldt = LocalDateTime.now();
+        newPost.setCreationDate(ldt.toString());
         Post createdPost = postService.create(newPost);
 
         if(createdPost == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
         }
 
-        PostDTO postDTO = new PostDTO(createdPost);
-
-        return new ResponseEntity<>(postDTO, HttpStatus.CREATED);
+        return new ResponseEntity<>(newPost, HttpStatus.CREATED);
     }
 
     @DeleteMapping()
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public void delete(@RequestParam Integer id) {
         Optional<Post> deletedPost = postService.delete(id);
     }
 
     @PutMapping (value = "{id}", consumes = "application/json")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<PostDTO> update(@PathVariable("id") Integer id, @RequestBody PostDTO newPost) {
 
         Post post = postService.findOne(id);
@@ -63,7 +61,6 @@ public class PostController {
     }
 
     @GetMapping("/all")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public List<Post> loadAll() {
         return this.postService.findAll();
     }

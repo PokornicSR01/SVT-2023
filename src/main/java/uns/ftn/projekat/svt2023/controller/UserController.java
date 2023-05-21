@@ -7,6 +7,7 @@ import org.springframework.security.authentication.*;
 import org.springframework.security.core.*;
 import org.springframework.security.core.context.*;
 import org.springframework.security.core.userdetails.*;
+import org.springframework.security.crypto.password.*;
 import org.springframework.validation.annotation.*;
 import org.springframework.web.bind.annotation.*;
 import uns.ftn.projekat.svt2023.model.dto.*;
@@ -30,14 +31,16 @@ public class UserController
     UserDetailsService userDetailsService;
     AuthenticationManager authenticationManager;
     TokenUtils tokenUtils;
+    PasswordEncoder encoder;
 
     @Autowired
     public UserController(UserServiceImpl userService, AuthenticationManager authenticationManager,
-                          UserDetailsService userDetailsService, TokenUtils tokenUtils){
+                          UserDetailsService userDetailsService, TokenUtils tokenUtils, PasswordEncoder encoder){
         this.userService = userService;
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.tokenUtils = tokenUtils;
+        this.encoder = encoder;
     }
 
     @PostMapping("/signup")
@@ -79,6 +82,23 @@ public class UserController
             return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+    }
+
+    @PutMapping("/changePassword")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<UserDTO> changePassword (@RequestBody @Validated PasswordDTO passwords) {
+        User foundUser = userService.findByUsername(passwords.getUsername());
+
+        if(encoder.matches(passwords.getCurrent(), foundUser.getPassword()) && passwords.getConfirm().equals(passwords.getPassword())){
+            foundUser.setPassword(encoder.encode(passwords.getPassword()));
+            userService.save(foundUser);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+
+        UserDTO userDTO = new UserDTO(foundUser);
+
+        return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
     }
 
     @GetMapping("/all")
