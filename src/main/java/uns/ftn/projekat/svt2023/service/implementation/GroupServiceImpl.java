@@ -19,11 +19,8 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public Group create(GroupDTO groupDTO) {
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        LocalDateTime dateTime = LocalDateTime.parse(groupDTO.getCreationDate(), formatter);
-
         Group newGroup = new Group();
-        newGroup.setCreationDate(dateTime);
+        newGroup.setCreationDate(LocalDateTime.now());
         newGroup.setId(groupDTO.getId());
         newGroup.setName(groupDTO.getName());
         newGroup.setDescription(groupDTO.getDescription());

@@ -22,14 +22,11 @@ public class PostServiceImpl implements PostService {
     @Override
     public Post create(PostDTO postDTO) {
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        LocalDateTime dateTime = LocalDateTime.parse(postDTO.getCreationDate(), formatter);
-
         User user = userService.findByUsername(postDTO.getUserUsername());
 
         Post newPost = new Post();
         newPost.setUser(user);
-        newPost.setCreationDate(dateTime);
+        newPost.setCreationDate(LocalDateTime.now());
         newPost.setId(postDTO.getId());
         newPost.setContent(postDTO.getContent());
         newPost = postRepository.save(newPost);

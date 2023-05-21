@@ -28,8 +28,7 @@ public class PostController {
     @PostMapping("/create")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<PostDTO> create(@RequestBody PostDTO newPost) {
-        LocalDateTime ldt = LocalDateTime.now();
-        newPost.setCreationDate(ldt.toString());
+
         Post createdPost = postService.create(newPost);
 
         if(createdPost == null) {
