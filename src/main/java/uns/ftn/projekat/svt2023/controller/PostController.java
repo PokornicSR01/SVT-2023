@@ -3,6 +3,7 @@ package uns.ftn.projekat.svt2023.controller;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.*;
+import org.springframework.validation.annotation.*;
 import org.springframework.web.bind.annotation.*;
 import uns.ftn.projekat.svt2023.model.dto.*;
 import uns.ftn.projekat.svt2023.model.entity.*;
@@ -43,20 +44,14 @@ public class PostController {
         Optional<Post> deletedPost = postService.delete(id);
     }
 
-    @PutMapping (value = "{id}", consumes = "application/json")
-    public ResponseEntity<PostDTO> update(@PathVariable("id") Integer id, @RequestBody PostDTO newPost) {
+    @PutMapping("/edit")
+    public ResponseEntity<PostDTO> edit(@RequestBody @Validated PostDTO editPost){
+        Post edit = postService.findOne(editPost.getId());
+        edit.setContent(editPost.getContent());
+        postService.save(edit);
 
-        Post post = postService.findOne(id);
-
-        if(post == null) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
-
-        post.setContent(newPost.getContent());
-
-        post = postService.save(post);
-
-        return new ResponseEntity<>(new PostDTO(post), HttpStatus.CREATED);
+        PostDTO postDTO = new PostDTO(edit);
+        return  new ResponseEntity<>(postDTO, HttpStatus.CREATED);
     }
 
     @GetMapping("/all")

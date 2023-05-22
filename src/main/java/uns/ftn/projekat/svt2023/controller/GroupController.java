@@ -3,6 +3,7 @@ package uns.ftn.projekat.svt2023.controller;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.*;
+import org.springframework.validation.annotation.*;
 import org.springframework.web.bind.annotation.*;
 import uns.ftn.projekat.svt2023.model.dto.*;
 import uns.ftn.projekat.svt2023.model.entity.*;
@@ -43,22 +44,15 @@ public class GroupController {
         Optional<Group> deletedGroup = groupService.delete(id);
     }
 
-    @PutMapping(value = "{id}", consumes = "application/json")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<GroupDTO> update(@PathVariable("id") Integer id, @RequestBody GroupDTO newGroup) {
+    @PutMapping("/edit")
+    public ResponseEntity<GroupDTO> edit(@RequestBody @Validated GroupDTO editGroup){
+        Group edit = groupService.findOne(editGroup.getId());
+        edit.setDescription(editGroup.getDescription());
+        edit.setName(editGroup.getName());
+        groupService.save(edit);
 
-        Group group = groupService.findOne(id);
-
-        if(group == null){
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-
-        group.setDescription(newGroup.getDescription());
-        group.setName(newGroup.getName());
-
-        group = groupService.save(group);
-
-        return new ResponseEntity<>(new GroupDTO(group),HttpStatus.CREATED);
+        GroupDTO groupDTO = new GroupDTO(edit);
+        return  new ResponseEntity<>(groupDTO, HttpStatus.CREATED);
     }
 
     @GetMapping("/all")
