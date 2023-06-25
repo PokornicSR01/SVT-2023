@@ -1,7 +1,9 @@
 package uns.ftn.projekat.svt2023.service.implementation;
 
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.http.*;
 import org.springframework.stereotype.*;
+import org.springframework.web.bind.annotation.*;
 import uns.ftn.projekat.svt2023.model.dto.*;
 import uns.ftn.projekat.svt2023.model.entity.*;
 import uns.ftn.projekat.svt2023.repository.*;
@@ -62,4 +64,10 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Set<User> getAllGroupAdmins(Integer id) {return groupRepository.getAllGroupAdmins(id);}
+
+    @Override
+    public Set<Post> getAllGroupPosts(Integer id) {return groupRepository.getAllGroupPosts(id);}
+
+    @Override
+    public Set<Group> findUserGroups(Integer userId) {return groupRepository.getAllUserGroups(userId);}
 }

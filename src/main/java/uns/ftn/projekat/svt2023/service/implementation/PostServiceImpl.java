@@ -69,10 +69,6 @@ public class PostServiceImpl implements PostService {
         return postRepository.findByUser(user);
     }
 
-    @Override
-    public List<Post> findGroupPosts(Group group) {
-        return postRepository.findByGroup(group);
-    }
 
     @Override
     public List<Post> findAll() {

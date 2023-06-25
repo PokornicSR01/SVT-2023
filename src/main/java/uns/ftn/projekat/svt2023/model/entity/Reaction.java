@@ -19,9 +19,12 @@ public class Reaction {
     private ReactionType type;
     @Column
     private LocalDateTime timeStamp;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User madeBy;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private Post post;
 
     public Reaction(Integer id, ReactionType type, LocalDateTime timeStamp) {
         this.id = id;

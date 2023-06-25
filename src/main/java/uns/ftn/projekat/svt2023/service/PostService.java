@@ -11,6 +11,5 @@ public interface PostService {
     Optional<Post> delete(Integer id);
     Post findOne(Integer id);
     List<Post> findUserPosts(User user);
-    List<Post> findGroupPosts(Group group);
     List<Post> findAll();
 }

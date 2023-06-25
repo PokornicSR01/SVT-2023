@@ -62,29 +62,6 @@ public class PostController {
         return post;
     }
 
-    @GetMapping("/users/{userId}")
-    public List<Post> getUserPosts(@PathVariable Integer userId) {
-        User user = userService.findOne(userId);
-        return postService.findUserPosts(user);
-    }
-
-    @PostMapping("/create/group/{groupId}")
-    public ResponseEntity<PostDTO> createGroupPost(@PathVariable Integer groupId,@RequestBody PostDTO newPost) {
-
-        Post createdPost = postService.create(newPost, groupId);
-
-        if(createdPost == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
-        }
-
-        return new ResponseEntity<>(newPost, HttpStatus.CREATED);
-    }
-
-    @GetMapping("/groups/{groupId}")
-    public List<Post> getGroupPosts(@PathVariable Integer groupId) {
-        Group group = groupService.findOne(groupId);
-        return postService.findGroupPosts(group);
-    }
 
     @GetMapping("/all")
     public List<Post> loadAll() {

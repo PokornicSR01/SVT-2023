@@ -30,6 +30,8 @@ public class UserController
 {
     UserService userService;
     GroupService groupService;
+    PostService postService;
+    ReactionService reactionService;
     UserDetailsService userDetailsService;
     AuthenticationManager authenticationManager;
     TokenUtils tokenUtils;
@@ -38,13 +40,15 @@ public class UserController
     @Autowired
     public UserController(UserServiceImpl userService, AuthenticationManager authenticationManager,
                           UserDetailsService userDetailsService, TokenUtils tokenUtils, PasswordEncoder encoder,
-                          GroupService groupService){
+                          GroupService groupService, PostService postService, ReactionService reactionService){
         this.userService = userService;
         this.groupService = groupService;
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.tokenUtils = tokenUtils;
         this.encoder = encoder;
+        this.postService = postService;
+        this.reactionService = reactionService;
     }
 
     @PostMapping("/signup")
@@ -88,21 +92,6 @@ public class UserController
 
     }
 
-    @PostMapping("/{userId}/groups")
-    public Group createGroupForUser(@PathVariable Integer userId, @RequestBody Group group) {
-        User user = userService.findOne(userId);
-        group.getAdmins().add(user);
-        return groupService.save(group);
-    }
-
-    @PostMapping("/{userId}/groups/{groupId}/admins")
-    public Group addAdminToGroup(@PathVariable Integer userId, @PathVariable Integer groupId) {
-        User user = userService.findOne(userId);
-        Group group = groupService.findOne(groupId);
-        group.getAdmins().add(user);
-        return groupService.save(group);
-    }
-
     @PutMapping("/changePassword")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<UserDTO> changePassword (@RequestBody @Validated PasswordDTO passwords) {
@@ -130,6 +119,28 @@ public class UserController
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public User user(Principal user) {
         return this.userService.findByUsername(user.getName());
+    }
+
+    @GetMapping("/{userId}/posts")
+    public List<Post> getUserPosts(@PathVariable Integer userId) {
+        User user = userService.findOne(userId);
+        return postService.findUserPosts(user);
+    }
+
+    @GetMapping("/{userId}/groups")
+    public Set<Group> getUserGroups(@PathVariable Integer userId) {
+        return groupService.findUserGroups(userId);
+    }
+
+    @PostMapping("/reactions/{postId}")
+    public ResponseEntity<ReactionDTO> reactToPost(@PathVariable Integer postId, @RequestBody @Validated ReactionDTO reactionDTO) {
+        Reaction reaction = reactionService.react(reactionDTO, postId);
+
+        if(reaction == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        return new ResponseEntity<>(reactionDTO, HttpStatus.CREATED);
     }
 
 }

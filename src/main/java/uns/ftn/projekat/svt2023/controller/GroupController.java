@@ -20,11 +20,14 @@ public class GroupController {
 
     GroupService groupService;
     UserService userService;
+    PostService postService;
 
     @Autowired
-    public GroupController(GroupService groupService,UserService userService) {
+    public GroupController(GroupService groupService,UserService userService,
+                           PostService postService) {
         this.groupService = groupService;
         this.userService = userService;
+        this.postService = postService;
     }
 
     @PostMapping("/create/{userId}")
@@ -43,7 +46,7 @@ public class GroupController {
     }
 
     @DeleteMapping()
-    public void delete(@RequestParam Integer id) {
+    public void delete(@PathVariable Integer id) {
         Optional<Group> deletedGroup = groupService.delete(id);
     }
 
@@ -90,6 +93,26 @@ public class GroupController {
         return group.getAdmins();
     }
 
+    @GetMapping("/{groupId}/posts")
+    public Set<Post> getGroupPosts(@PathVariable Integer groupId) {
+        Group group = groupService.findOne(groupId);
+        group.setPosts(groupService.getAllGroupPosts(groupId));
+        return group.getPosts();
+    }
+
     @GetMapping("/all")
     public List<Group> loadAll() {return this.groupService.findAll();}
+
+    @PostMapping("/{groupId}/posts")
+    public ResponseEntity<PostDTO> createGroupPost(@PathVariable Integer groupId, @RequestBody PostDTO newPost) {
+
+        Post createdPost = postService.create(newPost, groupId);
+
+        if(createdPost == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        return new ResponseEntity<>(newPost, HttpStatus.CREATED);
+    }
+
 }

@@ -14,4 +14,6 @@ public interface GroupService {
     List<Group> findAll();
     Set<User> getAllGroupMembers(Integer id);
     Set<User> getAllGroupAdmins(Integer id);
+    Set<Post> getAllGroupPosts(Integer id);
+    Set<Group> findUserGroups(Integer userId);
 }

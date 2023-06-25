@@ -13,4 +13,10 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
 
     @Query(value = "SELECT m FROM Group g JOIN g.admins m WHERE g.id = :groupId")
     Set<User> getAllGroupAdmins(Integer groupId);
+
+    @Query(value = "SELECT p FROM Post p WHERE p.group.id = :groupId")
+    Set<Post> getAllGroupPosts(Integer groupId);
+
+    @Query(value = "SELECT g FROM User u JOIN u.groups g WHERE u.id = :userId")
+    Set<Group> getAllUserGroups(Integer userId);
 }
