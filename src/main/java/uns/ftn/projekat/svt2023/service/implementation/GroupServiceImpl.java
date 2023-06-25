@@ -17,7 +17,11 @@ public class GroupServiceImpl implements GroupService {
     private GroupRepository groupRepository;
 
     @Override
-    public Group create(GroupDTO groupDTO) {
+    public Group create(GroupDTO groupDTO, User groupOwner) {
+        Set<User> admins = new HashSet<User>();
+        admins.add(groupOwner);
+        Set<User> members = new HashSet<User>();
+        members.add(groupOwner);
 
         Group newGroup = new Group();
         newGroup.setCreationDate(LocalDateTime.now());
@@ -26,6 +30,8 @@ public class GroupServiceImpl implements GroupService {
         newGroup.setDescription(groupDTO.getDescription());
         newGroup.setIsSuspended(groupDTO.getIsSuspended());
         newGroup.setSuspendedReason("");
+        newGroup.setAdmins(admins);
+        newGroup.setMembers(members);
         newGroup = groupRepository.save(newGroup);
 
         return newGroup;
@@ -50,4 +56,10 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public List<Group> findAll() {return groupRepository.findAll();}
+
+    @Override
+    public Set<User> getAllGroupMembers(Integer id) {return groupRepository.getAllGroupMemebrs(id);}
+
+    @Override
+    public Set<User> getAllGroupAdmins(Integer id) {return groupRepository.getAllGroupAdmins(id);}
 }

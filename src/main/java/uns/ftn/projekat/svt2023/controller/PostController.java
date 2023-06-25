@@ -18,12 +18,14 @@ import java.util.*;
 public class PostController {
 
     PostService postService;
-    PostRepository postRepository;
+    UserService userService;
+    GroupService groupService;
 
     @Autowired
-    public PostController(PostService postService, PostRepository postRepository) {
+    public PostController(PostService postService, UserService userService, GroupService groupService) {
         this.postService = postService;
-        this.postRepository = postRepository;
+        this.userService = userService;
+        this.groupService = groupService;
     }
 
     @PostMapping("/create")
@@ -52,6 +54,25 @@ public class PostController {
 
         PostDTO postDTO = new PostDTO(edit);
         return  new ResponseEntity<>(postDTO, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{postId}")
+    public Post getPost(@PathVariable Integer postId) {
+        Post post = postService.findOne(postId);
+        return post;
+    }
+
+    // GET /users/{userId}/posts
+    @GetMapping("/users/{userId}")
+    public List<Post> getUserPosts(@PathVariable Integer userId) {
+        User user = userService.findOne(userId);
+        return postService.findUserPosts(user);
+    }
+
+    @GetMapping("/groups/{groupId}")
+    public List<Post> getGroupPosts(@PathVariable Integer groupId) {
+        Group group = groupService.findOne(groupId);
+        return postService.findGroupPosts(group);
     }
 
     @GetMapping("/all")

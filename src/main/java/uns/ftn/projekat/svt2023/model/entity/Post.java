@@ -1,5 +1,6 @@
 package uns.ftn.projekat.svt2023.model.entity;
 
+import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,9 +19,12 @@ public class Post {
     private String content;
     @Column
     private LocalDateTime creationDate;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
+    @ManyToOne
+    @JsonIgnore
     private User user;
+    @ManyToOne
+    @JsonIgnore
+    private Group group;
 
     public Post(Integer id, String content, LocalDateTime creationDate) {
         this.id = id;

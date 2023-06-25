@@ -16,7 +16,6 @@ public class Svt2023Application {
 	public static void main(String[] args) {
 		SpringApplication.run(Svt2023Application.class, args);
 	}
-
 	@Bean
 	public CorsFilter corsFilter() {
 		UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();

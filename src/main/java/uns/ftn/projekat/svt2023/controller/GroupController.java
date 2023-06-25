@@ -1,5 +1,6 @@
 package uns.ftn.projekat.svt2023.controller;
 
+import org.hibernate.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.*;
@@ -10,6 +11,7 @@ import uns.ftn.projekat.svt2023.model.entity.*;
 import uns.ftn.projekat.svt2023.repository.*;
 import uns.ftn.projekat.svt2023.service.*;
 
+import javax.persistence.criteria.*;
 import java.util.*;
 
 @RestController
@@ -17,18 +19,19 @@ import java.util.*;
 public class GroupController {
 
     GroupService groupService;
-    GroupRepository groupRepository;
+    UserService userService;
 
     @Autowired
-    public GroupController(GroupService groupService,GroupRepository groupRepository ) {
-        this.groupRepository = groupRepository;
+    public GroupController(GroupService groupService,UserService userService) {
         this.groupService = groupService;
+        this.userService = userService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<GroupDTO> create(@RequestBody GroupDTO newGroup) {
+    @PostMapping("/create/{userId}")
+    public ResponseEntity<GroupDTO> create(@PathVariable Integer userId, @RequestBody GroupDTO newGroup) {
 
-        Group createdGroup = groupService.create(newGroup);
+        User groupOwner = userService.findOne(userId);
+        Group createdGroup = groupService.create(newGroup, groupOwner);
 
         if(createdGroup == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
@@ -53,6 +56,38 @@ public class GroupController {
 
         GroupDTO groupDTO = new GroupDTO(edit);
         return  new ResponseEntity<>(groupDTO, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{groupId}/members")
+    public Set<User> getGroupMembers(@PathVariable Integer groupId) {
+        Group group = groupService.findOne(groupId);
+        group.setMembers(groupService.getAllGroupMembers(groupId));
+        return group.getMembers();
+    }
+
+    @PostMapping("/{groupId}/members/{userId}")
+    public Group addMemberToGroup(@PathVariable Integer groupId, @PathVariable Integer userId) {
+        Group group = groupService.findOne(groupId);
+        User user = userService.findOne(userId);
+        group.setMembers(groupService.getAllGroupMembers(groupId));
+        group.getMembers().add(user);
+        return groupService.save(group);
+    }
+
+    @PostMapping("/{groupId}/admins/{userId}")
+    public Group addAdminToGroup(@PathVariable Integer groupId, @PathVariable Integer userId) {
+        Group group = groupService.findOne(groupId);
+        User user = userService.findOne(userId);
+        group.setAdmins(groupService.getAllGroupAdmins(groupId));
+        group.getAdmins().add(user);
+        return groupService.save(group);
+    }
+
+    @GetMapping("/{groupId}/admins")
+    public Set<User> getGroupAdmins(@PathVariable Integer groupId) {
+        Group group = groupService.findOne(groupId);
+        group.setAdmins(groupService.getAllGroupAdmins(groupId));
+        return group.getAdmins();
     }
 
     @GetMapping("/all")

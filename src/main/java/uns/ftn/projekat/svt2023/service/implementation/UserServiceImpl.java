@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public User findOne(Integer id) {
-        return userRepository.findById(id).orElseGet(null);
+        return userRepository.findById(id).orElseThrow(() -> new NullPointerException("User not found with id: " + id));
     }
     @Override
     public void delete(Integer id) {userRepository.deleteById(id);}

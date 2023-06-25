@@ -6,7 +6,8 @@ import uns.ftn.projekat.svt2023.model.entity.*;
 
 import java.util.*;
 
-public interface PostRepository extends JpaRepository<Post, Integer> {
-    List<Post> findByUser(User user);
-    List<Post> findByGroup(Group group);
+@Repository
+public interface GroupAdminRepository extends JpaRepository<GroupAdmin, Integer> {
+    Optional<User> findUserById(Integer integer);
+    Optional<Group> findGroupById(Integer integer);
 }

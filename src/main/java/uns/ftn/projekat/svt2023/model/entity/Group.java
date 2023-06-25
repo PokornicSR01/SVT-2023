@@ -1,9 +1,11 @@
 package uns.ftn.projekat.svt2023.model.entity;
 
+import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.*;
+import java.util.*;
 
 @Entity
 @Table(name = "guild")
@@ -24,6 +26,15 @@ public class Group {
     private Boolean isSuspended;
     @Column
     private String suspendedReason;
+    @ManyToMany
+    @JsonIgnore
+    private Set<User> admins;
+    @ManyToMany
+    @JsonIgnore
+    private Set<User> members;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Set<Post> posts;
 
     public Group(Integer id, String name, String description, LocalDateTime creationDate, Boolean isSuspended, String suspendedReason) {
         this.id = id;

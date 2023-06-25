@@ -7,9 +7,11 @@ import javax.swing.text.html.*;
 import java.util.*;
 
 public interface GroupService {
-    Group create(GroupDTO groupDTO);
+    Group create(GroupDTO groupDTO, User groupOwner);
     Group save(Group group);
     Optional<Group> delete(Integer id);
     Group findOne(Integer id);
     List<Group> findAll();
+    Set<User> getAllGroupMembers(Integer id);
+    Set<User> getAllGroupAdmins(Integer id);
 }

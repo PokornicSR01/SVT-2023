@@ -1,5 +1,6 @@
 package uns.ftn.projekat.svt2023.model.entity;
 
+import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 import uns.ftn.projekat.svt2023.model.enums.*;
 
@@ -32,8 +33,12 @@ public class User {
     private Roles role;
     @Column
     private LocalDateTime lastLogin;
-//    @OneToMany(fetch = FetchType.LAZY)
-//    private Set<Post> posts = new HashSet<Post>();
+    @OneToMany(fetch = FetchType.EAGER)
+    @JsonIgnore
+    private Set<Post> posts;
+    @ManyToMany
+    @JsonIgnore
+    private List<Group> groups;
 //    @OneToMany(fetch = FetchType.LAZY)
 //    private Set<Reaction> reactions = new HashSet<Reaction>();
 //    @OneToMany(fetch = FetchType.LAZY)

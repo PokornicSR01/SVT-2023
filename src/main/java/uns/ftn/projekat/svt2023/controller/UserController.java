@@ -1,5 +1,6 @@
 package uns.ftn.projekat.svt2023.controller;
 
+import org.hibernate.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.*;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import uns.ftn.projekat.svt2023.model.dto.*;
 import uns.ftn.projekat.svt2023.model.entity.*;
 import uns.ftn.projekat.svt2023.model.entity.User;
+import uns.ftn.projekat.svt2023.repository.*;
 import uns.ftn.projekat.svt2023.security.*;
 import uns.ftn.projekat.svt2023.service.*;
 import uns.ftn.projekat.svt2023.service.implementation.*;
@@ -26,8 +28,8 @@ import java.util.*;
 @RequestMapping("api/users")
 public class UserController
 {
-
     UserService userService;
+    GroupService groupService;
     UserDetailsService userDetailsService;
     AuthenticationManager authenticationManager;
     TokenUtils tokenUtils;
@@ -35,8 +37,10 @@ public class UserController
 
     @Autowired
     public UserController(UserServiceImpl userService, AuthenticationManager authenticationManager,
-                          UserDetailsService userDetailsService, TokenUtils tokenUtils, PasswordEncoder encoder){
+                          UserDetailsService userDetailsService, TokenUtils tokenUtils, PasswordEncoder encoder,
+                          GroupService groupService){
         this.userService = userService;
+        this.groupService = groupService;
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.tokenUtils = tokenUtils;
@@ -82,6 +86,21 @@ public class UserController
             return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+    }
+
+    @PostMapping("/{userId}/groups")
+    public Group createGroupForUser(@PathVariable Integer userId, @RequestBody Group group) {
+        User user = userService.findOne(userId);
+        group.getAdmins().add(user);
+        return groupService.save(group);
+    }
+
+    @PostMapping("/{userId}/groups/{groupId}/admins")
+    public Group addAdminToGroup(@PathVariable Integer userId, @PathVariable Integer groupId) {
+        User user = userService.findOne(userId);
+        Group group = groupService.findOne(groupId);
+        group.getAdmins().add(user);
+        return groupService.save(group);
     }
 
     @PutMapping("/changePassword")
