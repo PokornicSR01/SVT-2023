@@ -6,7 +6,7 @@ import uns.ftn.projekat.svt2023.model.entity.*;
 import java.util.*;
 
 public interface PostService {
-    Post create(PostDTO postDTO);
+    Post create(PostDTO postDTO, Integer groupId);
     Post save(Post post);
     Optional<Post> delete(Integer id);
     Post findOne(Integer id);

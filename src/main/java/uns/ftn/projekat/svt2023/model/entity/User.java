@@ -33,12 +33,15 @@ public class User {
     private Roles role;
     @Column
     private LocalDateTime lastLogin;
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany
     @JsonIgnore
     private Set<Post> posts;
     @ManyToMany
     @JsonIgnore
-    private List<Group> groups;
+    private Set<Group> groups;
+    @ManyToMany
+    @JsonIgnore
+    private Set<Group> adminOfGroups;
 //    @OneToMany(fetch = FetchType.LAZY)
 //    private Set<Reaction> reactions = new HashSet<Reaction>();
 //    @OneToMany(fetch = FetchType.LAZY)
@@ -47,7 +50,6 @@ public class User {
 //    private Set<Report> reports = new HashSet<Report>();
 //    @OneToOne(fetch = FetchType.LAZY)
 //    private Image image;
-//    @OneToMany(fetch = FetchType.LAZY)
-//    private Set<GroupAdmin> groupAdmins = new HashSet<GroupAdmin>();
+
 
 }

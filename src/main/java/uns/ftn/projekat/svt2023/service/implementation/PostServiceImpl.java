@@ -18,9 +18,11 @@ public class PostServiceImpl implements PostService {
     private PostRepository postRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private GroupService groupService;
 
     @Override
-    public Post create(PostDTO postDTO) {
+    public Post create(PostDTO postDTO, Integer groupId) {
 
         User user = userService.findByUsername(postDTO.getUserUsername());
 
@@ -29,6 +31,12 @@ public class PostServiceImpl implements PostService {
         newPost.setCreationDate(LocalDateTime.now());
         newPost.setId(postDTO.getId());
         newPost.setContent(postDTO.getContent());
+
+        if(groupId != null) {
+            Group group = groupService.findOne(groupId);
+            newPost.setGroup(group);
+        }
+
         newPost = postRepository.save(newPost);
 
         return newPost;
