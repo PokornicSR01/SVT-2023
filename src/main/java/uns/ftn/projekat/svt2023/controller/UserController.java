@@ -19,11 +19,14 @@ import uns.ftn.projekat.svt2023.security.*;
 import uns.ftn.projekat.svt2023.service.*;
 import uns.ftn.projekat.svt2023.service.implementation.*;
 
+import javax.persistence.criteria.*;
 import javax.servlet.http.*;
+import javax.transaction.*;
 import java.security.*;
 import java.time.*;
 import java.util.*;
 
+@Transactional
 @RestController
 @RequestMapping("api/users")
 public class UserController
@@ -32,6 +35,7 @@ public class UserController
     GroupService groupService;
     PostService postService;
     ReactionService reactionService;
+    GroupRequestService groupRequestService;
     UserDetailsService userDetailsService;
     AuthenticationManager authenticationManager;
     TokenUtils tokenUtils;
@@ -40,7 +44,8 @@ public class UserController
     @Autowired
     public UserController(UserServiceImpl userService, AuthenticationManager authenticationManager,
                           UserDetailsService userDetailsService, TokenUtils tokenUtils, PasswordEncoder encoder,
-                          GroupService groupService, PostService postService, ReactionService reactionService){
+                          GroupService groupService, PostService postService, ReactionService reactionService,
+                          GroupRequestService groupRequestService){
         this.userService = userService;
         this.groupService = groupService;
         this.authenticationManager = authenticationManager;
@@ -49,6 +54,7 @@ public class UserController
         this.encoder = encoder;
         this.postService = postService;
         this.reactionService = reactionService;
+        this.groupRequestService = groupRequestService;
     }
 
     @PostMapping("/signup")
@@ -143,4 +149,37 @@ public class UserController
         return new ResponseEntity<>(reactionDTO, HttpStatus.CREATED);
     }
 
+    @PostMapping("/{userId}/groups/{groupId}/requests")
+    public ResponseEntity<GroupRequestDTO> createGroupRequest(@PathVariable Integer userId,
+                                                              @PathVariable Integer groupId) {
+        GroupRequest groupRequest = groupRequestService.create(userId, groupId);
+
+        if(groupRequest == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        GroupRequestDTO createdGroupRequest = new GroupRequestDTO(groupRequest);
+
+        return new ResponseEntity<>(createdGroupRequest, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{userId}/groups/{groupId}/requests/{requestId}/approve")
+    public void approveGroupRequest(@PathVariable Integer userId,
+                                   @PathVariable Integer groupId,
+                                   @PathVariable Integer requestId) {
+        groupRequestService.approveRequest(requestId);
+
+        Group group = groupService.findOne(groupId);
+        User user = userService.findOne(userId);
+/*        group.setMembers(groupService.getAllGroupMembers(groupId));
+        group.getMembers().add(user);*/
+        groupService.save(group);
+    }
+
+    @PostMapping("/{userId}/groups/{groupId}/request/{requestId}/decline")
+    public void declineGroupRequest(@PathVariable Integer userId,
+                                    @PathVariable Integer groupId,
+                                    @PathVariable Integer requestId) {
+        groupRequestService.declineRequest(requestId);
+    }
 }

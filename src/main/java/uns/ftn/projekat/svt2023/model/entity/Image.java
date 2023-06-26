@@ -15,7 +15,7 @@ public class Image {
     private Integer id;
     @Column
     private String path;
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

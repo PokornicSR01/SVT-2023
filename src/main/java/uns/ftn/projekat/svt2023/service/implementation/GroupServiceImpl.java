@@ -69,5 +69,11 @@ public class GroupServiceImpl implements GroupService {
     public Set<Post> getAllGroupPosts(Integer id) {return groupRepository.getAllGroupPosts(id);}
 
     @Override
+    public Set<GroupRequest> getAllGroupRequests(Integer id) {return groupRepository.getAllGroupRequests(id);}
+
+    @Override
     public Set<Group> findUserGroups(Integer userId) {return groupRepository.getAllUserGroups(userId);}
+
+    @Override
+    public void banGroup(Integer groupId) {groupRepository.banGroup(groupId);}
 }

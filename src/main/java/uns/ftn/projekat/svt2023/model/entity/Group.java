@@ -35,6 +35,9 @@ public class Group {
     @OneToMany(fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Post> posts;
+    @OneToMany
+    @JsonIgnore
+    private Set<GroupRequest> groupRequests;
 
     public Group(Integer id, String name, String description, LocalDateTime creationDate, Boolean isSuspended, String suspendedReason) {
         this.id = id;

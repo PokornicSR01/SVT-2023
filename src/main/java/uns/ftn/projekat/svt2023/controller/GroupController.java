@@ -68,7 +68,7 @@ public class GroupController {
         return group.getMembers();
     }
 
-    @PostMapping("/{groupId}/members/{userId}")
+    @PostMapping("/{groupId}/members/{userId}/add")
     public Group addMemberToGroup(@PathVariable Integer groupId, @PathVariable Integer userId) {
         Group group = groupService.findOne(groupId);
         User user = userService.findOne(userId);
@@ -77,7 +77,7 @@ public class GroupController {
         return groupService.save(group);
     }
 
-    @PostMapping("/{groupId}/admins/{userId}")
+    @PostMapping("/{groupId}/admins/{userId}/add")
     public Group addAdminToGroup(@PathVariable Integer groupId, @PathVariable Integer userId) {
         Group group = groupService.findOne(groupId);
         User user = userService.findOne(userId);
@@ -113,6 +113,13 @@ public class GroupController {
         }
 
         return new ResponseEntity<>(newPost, HttpStatus.CREATED);
+    }
+    @GetMapping("/{groupId}/requests")
+    public Set<GroupRequest> getGroupRequests(@PathVariable Integer groupId) {return groupService.getAllGroupRequests(groupId);}
+
+    @PostMapping("/{groupId}/ban")
+    public void banGroup(@PathVariable Integer groupId) {
+        groupService.banGroup(groupId);
     }
 
 }

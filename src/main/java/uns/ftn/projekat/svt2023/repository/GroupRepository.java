@@ -4,8 +4,11 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.*;
 import uns.ftn.projekat.svt2023.model.entity.*;
 
+import javax.transaction.*;
 import java.util.*;
 
+@Transactional
+@Repository
 public interface GroupRepository extends JpaRepository<Group, Integer> {
 
     @Query(value = "SELECT m FROM Group g JOIN g.members m WHERE g.id = :groupId")
@@ -19,4 +22,11 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
 
     @Query(value = "SELECT g FROM User u JOIN u.groups g WHERE u.id = :userId")
     Set<Group> getAllUserGroups(Integer userId);
+
+    @Query(value = "SELECT r FROM Group g JOIN g.groupRequests r WHERE r.approved = false AND g.id = :groupId")
+    Set<GroupRequest> getAllGroupRequests(Integer groupId);
+
+    @Modifying
+    @Query(value = "UPDATE Group set isSuspended=1 where id= :groupId")
+    void banGroup(Integer groupId);
 }

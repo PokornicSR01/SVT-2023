@@ -15,5 +15,7 @@ public interface GroupService {
     Set<User> getAllGroupMembers(Integer id);
     Set<User> getAllGroupAdmins(Integer id);
     Set<Post> getAllGroupPosts(Integer id);
+    Set<GroupRequest> getAllGroupRequests(Integer id);
     Set<Group> findUserGroups(Integer userId);
+    void banGroup(Integer groupId);
 }

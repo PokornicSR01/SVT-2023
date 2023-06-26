@@ -20,6 +20,11 @@ public class GroupRequest {
     private LocalDateTime created;
     @Column
     private LocalDateTime at;
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+    @ManyToOne
+    private Group group;
 
     public GroupRequest(Integer id, Boolean approved, LocalDateTime created, LocalDateTime at) {
         this.id = id;
