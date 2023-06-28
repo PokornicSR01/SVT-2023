@@ -31,31 +31,17 @@ import java.util.*;
 @RequestMapping("api/users")
 public class UserController
 {
-    UserService userService;
-    GroupService groupService;
-    PostService postService;
     ReactionService reactionService;
-    GroupRequestService groupRequestService;
+    UserService userService;
     FriendRequestService friendRequestService;
     UserDetailsService userDetailsService;
-    AuthenticationManager authenticationManager;
-    TokenUtils tokenUtils;
-    PasswordEncoder encoder;
 
     @Autowired
-    public UserController(UserServiceImpl userService, AuthenticationManager authenticationManager,
-                          UserDetailsService userDetailsService, TokenUtils tokenUtils, PasswordEncoder encoder,
-                          GroupService groupService, PostService postService, ReactionService reactionService,
-                          GroupRequestService groupRequestService, FriendRequestService friendRequestService){
+    public UserController(UserServiceImpl userService, UserDetailsService userDetailsService,
+                          ReactionService reactionService, FriendRequestService friendRequestService){
         this.userService = userService;
-        this.groupService = groupService;
-        this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
-        this.tokenUtils = tokenUtils;
-        this.encoder = encoder;
-        this.postService = postService;
         this.reactionService = reactionService;
-        this.groupRequestService = groupRequestService;
         this.friendRequestService = friendRequestService;
     }
 
@@ -74,16 +60,7 @@ public class UserController
     @PostMapping("/login")
     public ResponseEntity<UserTokenState> createAuthenticationToken(
             @RequestBody JwtAuthenticationRequest authenticationRequest, HttpServletResponse response){
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                authenticationRequest.getUsername(), authenticationRequest.getPassword()));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        UserDetails user = (UserDetails) authentication.getPrincipal();
-        String jwt = tokenUtils.generateToken(user);
-        int expiresIm = tokenUtils.getExpiredIn();
-
-        return ResponseEntity.ok(new UserTokenState(jwt, expiresIm));
+        return userService.createAuthenticationToken(authenticationRequest);
     }
 
     @DeleteMapping("/{id}")
@@ -103,25 +80,13 @@ public class UserController
     @PutMapping("/changePassword")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<UserDTO> changePassword (@RequestBody @Validated PasswordDTO passwords) {
-        Authentication a = SecurityContextHolder.getContext().getAuthentication();
-        User foundUser = userService.findByUsername(a.getName());
-
-        if(encoder.matches(passwords.getCurrent(), foundUser.getPassword()) && passwords.getConfirm().equals(passwords.getPassword())){
-            foundUser.setPassword(encoder.encode(passwords.getPassword()));
-            userService.save(foundUser);
-        } else {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
-
-        UserDTO userDTO = new UserDTO(foundUser);
-
-        return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
+        return userService.changePassword(passwords);
     }
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN')")
     public List<User> loadAll() {
-        return this.userService.findAll();
+        return this.userService.getAll();
     }
 
     @GetMapping("/whoami")
@@ -131,18 +96,19 @@ public class UserController
     }
 
     @GetMapping("/{userId}/posts")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public List<Post> getUserPosts(@PathVariable Integer userId) {
-        User user = userService.findOne(userId);
-        return postService.findUserPosts(user);
+        return userService.getUserPosts(userId);
     }
 
-    //ne radi
     @GetMapping("/{userId}/groups")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Set<Group> getUserGroups(@PathVariable Integer userId) {
-        return groupService.findUserGroups(userId);
+        return userService.getUserGroups(userId);
     }
 
     @PostMapping("/reactions/{postId}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ReactionDTO> reactToPost(@PathVariable Integer postId, @RequestBody @Validated ReactionDTO reactionDTO) {
         Reaction reaction = reactionService.react(reactionDTO, postId);
 
@@ -153,62 +119,15 @@ public class UserController
         return new ResponseEntity<>(reactionDTO, HttpStatus.CREATED);
     }
 
-    @PostMapping("/{userId}/groups/{groupId}/requests")
-    public ResponseEntity<GroupRequestDTO> createGroupRequest(@PathVariable Integer userId,
-                                                              @PathVariable Integer groupId) {
-        GroupRequest groupRequest = groupRequestService.create(userId, groupId);
-
-        if(groupRequest == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
-        }
-
-        GroupRequestDTO createdGroupRequest = new GroupRequestDTO(groupRequest);
-
-        return new ResponseEntity<>(createdGroupRequest, HttpStatus.CREATED);
-    }
-
-    @PostMapping("/{userId}/groups/{groupId}/requests/{requestId}/approve")
-    public void approveGroupRequest(@PathVariable Integer userId,
-                                   @PathVariable Integer groupId,
-                                   @PathVariable Integer requestId) {
-        groupRequestService.approveRequest(requestId);
-
-        Group group = groupService.findOne(groupId);
-        User user = userService.findOne(userId);
-/*        group.setMembers(groupService.getAllGroupMembers(groupId));
-        group.getMembers().add(user);*/
-        groupService.save(group);
+    @GetMapping("/friends/all")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public Set<User> getAllFriends() {
+        return userService.getAllFriends();
     }
 
     @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Set<User> approveGroupRequest(@RequestParam String name) {
         return userService.searchUsersByName(name);
-    }
-
-    @PostMapping("/{userId}/groups/{groupId}/request/{requestId}/decline")
-    public void declineGroupRequest(@PathVariable Integer userId,
-                                    @PathVariable Integer groupId,
-                                    @PathVariable Integer requestId) {
-        groupRequestService.declineRequest(requestId);
-    }
-
-    @PostMapping("/{to}/add")
-    public void sendFriendRequest(@PathVariable Integer to) {
-        friendRequestService.create(to);
-    }
-
-    @PostMapping("/{friendRequestId}/approve")
-    public void approveFriendRequest(@PathVariable Integer friendRequestId) {
-        friendRequestService.approveFriendRequest(friendRequestId);
-    }
-
-    @PostMapping("/{friendRequestId}/decline")
-    public void declineFriendRequest(@PathVariable Integer friendRequestId) {
-        friendRequestService.declineFriendRequest(friendRequestId);
-    }
-
-    @GetMapping("/friends/all")
-    public Set<User> getAllFriends() {
-        return userService.getAllFriends();
     }
 }

@@ -1,6 +1,7 @@
 package uns.ftn.projekat.svt2023.security;
 
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.context.*;
 import org.springframework.security.core.userdetails.*;
@@ -14,8 +15,8 @@ import java.io.*;
 public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
     private  UserDetailsService userDetailsService;
-
     private TokenUtils tokenUtils;
+
 
     @Autowired
     public AuthenticationTokenFilter(UserDetailsService userDetailsService, TokenUtils tokenUtils) {

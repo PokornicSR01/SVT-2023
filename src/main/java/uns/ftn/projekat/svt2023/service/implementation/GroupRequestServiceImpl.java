@@ -1,6 +1,7 @@
 package uns.ftn.projekat.svt2023.service.implementation;
 
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.context.annotation.*;
 import org.springframework.stereotype.*;
 import uns.ftn.projekat.svt2023.model.dto.*;
 import uns.ftn.projekat.svt2023.model.entity.*;
@@ -15,14 +16,16 @@ public class GroupRequestServiceImpl implements GroupRequestService {
     @Autowired
     private GroupRequestRepository groupRequestRepository;
     @Autowired
+    @Lazy
     private UserService userService;
     @Autowired
+    @Lazy
     private GroupService groupService;
 
     @Override
-    public GroupRequest create(Integer userId, Integer groupId) {
+    public GroupRequest create(Integer groupId) {
         Group group = groupService.findOne(groupId);
-        User user = userService.findOne(userId);
+        User user = userService.returnLoggedUser();
 
         if(group == null || user == null) {
             return null;
@@ -32,7 +35,7 @@ public class GroupRequestServiceImpl implements GroupRequestService {
 
         groupRequest.setGroup(group);
         groupRequest.setUser(user);
-        groupRequest.setApproved(true);
+        groupRequest.setApproved(false);
         groupRequest.setCreated(LocalDateTime.now());
 
         return groupRequestRepository.save(groupRequest);
@@ -43,4 +46,5 @@ public class GroupRequestServiceImpl implements GroupRequestService {
 
     @Override
     public void declineRequest(Integer requestId) {groupRequestRepository.declineGroupRequest(requestId);}
+
 }

@@ -19,27 +19,19 @@ import java.util.*;
 public class GroupController {
 
     GroupService groupService;
-    UserService userService;
     PostService postService;
-    GroupRequestService groupRequestService;
 
     @Autowired
-    public GroupController(GroupService groupService,UserService userService,
-                           PostService postService, GroupRequestService groupRequestService) {
+    public GroupController(GroupService groupService, PostService postService) {
         this.groupService = groupService;
-        this.userService = userService;
         this.postService = postService;
-        this.groupRequestService = groupRequestService;
     }
 
-    @PostMapping("/create/{userId}")
-    public ResponseEntity<GroupDTO> create(@PathVariable Integer userId, @RequestBody GroupDTO newGroup) {
+    @PostMapping("/create")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<GroupDTO> create(@RequestBody GroupDTO newGroup) {
 
-        User groupOwner = userService.findOne(userId);
-        Group createdGroup = groupService.create(newGroup, groupOwner);
-        GroupRequest groupRequest = groupRequestService.create(userId, createdGroup.getId());
-        groupRequestService.approveRequest(groupRequest.getId());
-
+        Group createdGroup = groupService.create(newGroup);
 
         if(createdGroup == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
@@ -50,12 +42,14 @@ public class GroupController {
         return new ResponseEntity<>(groupDTO, HttpStatus.CREATED);
     }
 
-    @DeleteMapping()
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public void delete(@PathVariable Integer id) {
         Optional<Group> deletedGroup = groupService.delete(id);
     }
 
     @PutMapping("/edit")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<GroupDTO> edit(@RequestBody @Validated GroupDTO editGroup){
         Group edit = groupService.findOne(editGroup.getId());
         edit.setDescription(editGroup.getDescription());
@@ -67,37 +61,35 @@ public class GroupController {
     }
 
     @GetMapping("/{groupId}/members")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Set<User> getGroupMembers(@PathVariable Integer groupId) {
         return groupService.getAllGroupMembers(groupId);
     }
 
-    @PostMapping("/{groupId}/admins/{userId}/add")
-    public Group addAdminToGroup(@PathVariable Integer groupId, @PathVariable Integer userId) {
-        Group group = groupService.findOne(groupId);
-        User user = userService.findOne(userId);
-        group.setAdmins(groupService.getAllGroupAdmins(groupId));
-        group.getAdmins().add(user);
-        return groupService.save(group);
+    @PostMapping("/{groupId}/admins/{userId}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public void addAdminToGroup(@PathVariable Integer groupId, @PathVariable Integer userId) {
+        groupService.addAdminToGroup(groupId, userId);
     }
 
     @GetMapping("/{groupId}/admins")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Set<User> getGroupAdmins(@PathVariable Integer groupId) {
-        Group group = groupService.findOne(groupId);
-        group.setAdmins(groupService.getAllGroupAdmins(groupId));
-        return group.getAdmins();
+        return groupService.getAllGroupAdmins(groupId);
     }
 
     @GetMapping("/{groupId}/posts")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Set<Post> getGroupPosts(@PathVariable Integer groupId) {
-        Group group = groupService.findOne(groupId);
-        group.setPosts(groupService.getAllGroupPosts(groupId));
-        return group.getPosts();
+        return groupService.getAllGroupPosts(groupId);
     }
 
     @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Group> loadAll() {return this.groupService.findAll();}
 
     @PostMapping("/{groupId}/posts")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<PostDTO> createGroupPost(@PathVariable Integer groupId, @RequestBody PostDTO newPost) {
 
         Post createdPost = postService.create(newPost, groupId);
@@ -110,10 +102,14 @@ public class GroupController {
     }
 
     //ne radi
+    //proveriti
     @GetMapping("/{groupId}/requests")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Set<GroupRequest> getGroupRequests(@PathVariable Integer groupId) {return groupService.getAllGroupRequests(groupId);}
 
+    //proveriti
     @PostMapping("/{groupId}/ban")
+    @PreAuthorize("hasRole('ADMIN')")
     public void banGroup(@PathVariable Integer groupId) {
         groupService.banGroup(groupId);
     }

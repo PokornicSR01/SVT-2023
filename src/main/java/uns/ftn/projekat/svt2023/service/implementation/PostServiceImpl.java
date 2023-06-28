@@ -65,12 +65,6 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> findUserPosts(User user) {
-        return postRepository.findByUser(user);
-    }
-
-
-    @Override
     public List<Post> findAll() {
         return this.postRepository.findAll();
     }

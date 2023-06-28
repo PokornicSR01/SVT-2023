@@ -10,6 +10,5 @@ public interface PostService {
     Post save(Post post);
     Optional<Post> delete(Integer id);
     Post findOne(Integer id);
-    List<Post> findUserPosts(User user);
     List<Post> findAll();
 }

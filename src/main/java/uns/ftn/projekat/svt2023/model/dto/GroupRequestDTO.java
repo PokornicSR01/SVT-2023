@@ -25,6 +25,5 @@ public class GroupRequestDTO {
         this.userUsername = groupRequest.getUser().getUsername();
         this.groupdId = groupRequest.getGroup().getId();
         this.created = groupRequest.getCreated();
-        this.approved = groupRequest.getApproved();
     }
 }

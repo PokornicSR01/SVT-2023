@@ -1,14 +1,20 @@
 package uns.ftn.projekat.svt2023.service.implementation;
 
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.context.annotation.*;
+import org.springframework.http.*;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.*;
 import org.springframework.security.core.context.*;
+import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.*;
 import org.springframework.stereotype.*;
 import uns.ftn.projekat.svt2023.model.dto.*;
 import uns.ftn.projekat.svt2023.model.entity.*;
+import uns.ftn.projekat.svt2023.model.entity.User;
 import uns.ftn.projekat.svt2023.model.enums.*;
 import uns.ftn.projekat.svt2023.repository.*;
+import uns.ftn.projekat.svt2023.security.*;
 import uns.ftn.projekat.svt2023.service.*;
 
 import java.util.*;
@@ -19,7 +25,22 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
+    private PostRepository postRepository;
+    @Autowired
+    @Lazy
+    private GroupService groupService;
+    @Autowired
+    @Lazy
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    @Lazy
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    @Lazy
+    private TokenUtils tokenUtils;
+    @Autowired
+    @Lazy
+    private PasswordEncoder encoder;
 
     @Override
     public User findByUsername(String username) {
@@ -59,6 +80,48 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public ResponseEntity<UserTokenState> createAuthenticationToken(JwtAuthenticationRequest authenticationRequest) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                authenticationRequest.getUsername(), authenticationRequest.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        UserDetails user = (UserDetails) authentication.getPrincipal();
+        String jwt = tokenUtils.generateToken(user);
+        int expiresIm = tokenUtils.getExpiredIn();
+
+        return ResponseEntity.ok(new UserTokenState(jwt, expiresIm));
+    }
+
+    @Override
+    public ResponseEntity<UserDTO> changePassword(PasswordDTO passwords) {
+        Authentication a = SecurityContextHolder.getContext().getAuthentication();
+        User foundUser = this.findByUsername(a.getName());
+
+        if(encoder.matches(passwords.getCurrent(), foundUser.getPassword()) && passwords.getConfirm().equals(passwords.getPassword())){
+            foundUser.setPassword(encoder.encode(passwords.getPassword()));
+            this.save(foundUser);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+
+        UserDTO userDTO = new UserDTO(foundUser);
+
+        return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
+    }
+
+    @Override
+    public List<Post> getUserPosts(Integer userId) {
+        User user = this.findOne(userId);
+        return postRepository.findByUser(user);
+    }
+
+    @Override
+    public Set<Group> getUserGroups(Integer userId) {
+        return groupService.findUserGroups(userId);
+    }
+
+    @Override
     public User create(UserDTO userDTO) {
 
         Optional<User> user = userRepository.findFirstByUsername(userDTO.getUsername());
@@ -85,13 +148,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findAll() {
+    public List<User> getAll() {
         return this.userRepository.findAll();
     }
+
     @Override
     public User findOne(Integer id) {
         return userRepository.findById(id).orElseThrow(() -> new NullPointerException("User not found with id: " + id));
     }
+
     @Override
     public void delete(Integer id) {userRepository.deleteById(id);}
 

@@ -42,11 +42,13 @@ public class PostController {
     }
 
     @DeleteMapping()
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public void delete(@RequestParam Integer id) {
         Optional<Post> deletedPost = postService.delete(id);
     }
 
     @PutMapping("/edit")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<PostDTO> edit(@RequestBody @Validated PostDTO editPost){
         Post edit = postService.findOne(editPost.getId());
         edit.setContent(editPost.getContent());
@@ -57,13 +59,14 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Post getPost(@PathVariable Integer postId) {
         Post post = postService.findOne(postId);
         return post;
     }
 
-
     @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Post> loadAll() {
         return this.postService.findAll();
     }

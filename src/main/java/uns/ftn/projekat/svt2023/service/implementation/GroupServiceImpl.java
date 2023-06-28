@@ -1,6 +1,7 @@
 package uns.ftn.projekat.svt2023.service.implementation;
 
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.context.annotation.*;
 import org.springframework.http.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +18,17 @@ import java.util.*;
 public class GroupServiceImpl implements GroupService {
     @Autowired
     private GroupRepository groupRepository;
+    @Autowired
+    @Lazy
+    private UserService userService;
+    @Autowired
+    @Lazy
+    private GroupRequestService groupRequestService;
 
     @Override
-    public Group create(GroupDTO groupDTO, User groupOwner) {
+    public Group create(GroupDTO groupDTO) {
+        User groupOwner = userService.returnLoggedUser();
+
         Set<User> admins = new HashSet<User>();
         admins.add(groupOwner);
 
@@ -32,6 +41,9 @@ public class GroupServiceImpl implements GroupService {
         newGroup.setSuspendedReason("");
         newGroup.setAdmins(admins);
         newGroup = groupRepository.save(newGroup);
+
+        GroupRequest groupRequest = groupRequestService.create(newGroup.getId());
+        groupRequestService.approveRequest(groupRequest.getId());
 
         return newGroup;
     }
@@ -73,4 +85,15 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public void banGroup(Integer groupId) {groupRepository.banGroup(groupId);}
+
+    @Override
+    public void addAdminToGroup(Integer groupId, Integer userId) {
+        Group group = this.findOne(groupId);
+        User user = userService.findOne(userId);
+
+        group.setAdmins(this.getAllGroupAdmins(groupId));
+        group.getAdmins().add(user);
+
+        this.save(group);
+    }
 }

@@ -7,7 +7,7 @@ import javax.swing.text.html.*;
 import java.util.*;
 
 public interface GroupService {
-    Group create(GroupDTO groupDTO, User groupOwner);
+    Group create(GroupDTO groupDTO);
     Group save(Group group);
     Optional<Group> delete(Integer id);
     Group findOne(Integer id);
@@ -18,4 +18,5 @@ public interface GroupService {
     Set<GroupRequest> getAllGroupRequests(Integer id);
     Set<Group> findUserGroups(Integer userId);
     void banGroup(Integer groupId);
+    void addAdminToGroup(Integer groupId, Integer userId);
 }
