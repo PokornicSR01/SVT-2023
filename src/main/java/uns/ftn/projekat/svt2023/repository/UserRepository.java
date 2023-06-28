@@ -11,4 +11,15 @@ import java.util.*;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findFirstByUsername(String username);
+    @Query(value = "SELECT u FROM User u WHERE concat(u.firstName,' ', u.lastName) LIKE %:name% OR concat(u.lastName, ' ', u.firstName) LIKE %:name%")
+    Set<User> searchUsersByName(String name);
+
+//    @Query(value = "SELECT u FROM FriendRequest r JOIN r.toUser u WHERE r.approved = true AND u.id = :userId UNION SELECT u1 FROM FriendRequest r1 JOIN r1.fromUser u1 WHERE r1.approved = true AND u1.id = :userId")
+//    Set<User> getAllFriends(Integer userId);
+
+    @Query(value = "SELECT u FROM FriendRequest r JOIN r.fromUser u WHERE r.approved = true AND r.toUser.id = :userId")
+    Set<User> getAllFriends(Integer userId);
+
+    @Query(value = "SELECT u FROM FriendRequest r JOIN r.toUser u WHERE r.approved = true AND r.fromUser.id = :userId")
+    Set<User> getAllFriends1(Integer userId);
 }

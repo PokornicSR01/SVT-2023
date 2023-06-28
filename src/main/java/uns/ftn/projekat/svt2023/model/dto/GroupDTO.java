@@ -17,7 +17,6 @@ public class GroupDTO {
     private String name;
     @NotBlank
     private String description;
-
     private String creationDate;
     private Boolean isSuspended;
     private String suspendedReason;

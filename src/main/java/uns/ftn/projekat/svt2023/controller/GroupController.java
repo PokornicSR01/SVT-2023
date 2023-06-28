@@ -21,13 +21,15 @@ public class GroupController {
     GroupService groupService;
     UserService userService;
     PostService postService;
+    GroupRequestService groupRequestService;
 
     @Autowired
     public GroupController(GroupService groupService,UserService userService,
-                           PostService postService) {
+                           PostService postService, GroupRequestService groupRequestService) {
         this.groupService = groupService;
         this.userService = userService;
         this.postService = postService;
+        this.groupRequestService = groupRequestService;
     }
 
     @PostMapping("/create/{userId}")
@@ -35,6 +37,9 @@ public class GroupController {
 
         User groupOwner = userService.findOne(userId);
         Group createdGroup = groupService.create(newGroup, groupOwner);
+        GroupRequest groupRequest = groupRequestService.create(userId, createdGroup.getId());
+        groupRequestService.approveRequest(groupRequest.getId());
+
 
         if(createdGroup == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
@@ -63,18 +68,7 @@ public class GroupController {
 
     @GetMapping("/{groupId}/members")
     public Set<User> getGroupMembers(@PathVariable Integer groupId) {
-        Group group = groupService.findOne(groupId);
-        group.setMembers(groupService.getAllGroupMembers(groupId));
-        return group.getMembers();
-    }
-
-    @PostMapping("/{groupId}/members/{userId}/add")
-    public Group addMemberToGroup(@PathVariable Integer groupId, @PathVariable Integer userId) {
-        Group group = groupService.findOne(groupId);
-        User user = userService.findOne(userId);
-        group.setMembers(groupService.getAllGroupMembers(groupId));
-        group.getMembers().add(user);
-        return groupService.save(group);
+        return groupService.getAllGroupMembers(groupId);
     }
 
     @PostMapping("/{groupId}/admins/{userId}/add")
@@ -114,6 +108,8 @@ public class GroupController {
 
         return new ResponseEntity<>(newPost, HttpStatus.CREATED);
     }
+
+    //ne radi
     @GetMapping("/{groupId}/requests")
     public Set<GroupRequest> getGroupRequests(@PathVariable Integer groupId) {return groupService.getAllGroupRequests(groupId);}
 

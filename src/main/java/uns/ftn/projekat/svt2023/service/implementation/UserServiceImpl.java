@@ -1,6 +1,8 @@
 package uns.ftn.projekat.svt2023.service.implementation;
 
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.security.core.*;
+import org.springframework.security.core.context.*;
 import org.springframework.security.crypto.password.*;
 import org.springframework.stereotype.*;
 import uns.ftn.projekat.svt2023.model.dto.*;
@@ -29,6 +31,33 @@ public class UserServiceImpl implements UserService {
         }
         return null;
     }
+
+    @Override
+    public Set<User> searchUsersByName(String name) {
+        return userRepository.searchUsersByName(name);
+    }
+
+    @Override
+    public User returnLoggedUser() {
+        Authentication a = SecurityContextHolder.getContext().getAuthentication();
+        return this.findByUsername(a.getName());
+    }
+
+    @Override
+    public Set<User> getAllFriends() {
+        User user = this.returnLoggedUser();
+
+        Set<User> firstSet = userRepository.getAllFriends(user.getId());
+        Set<User> secondSet = userRepository.getAllFriends1(user.getId());
+
+        Set<User> mergedSet = new HashSet<>();
+        mergedSet.addAll(firstSet);
+        mergedSet.addAll(secondSet);
+        mergedSet.remove(user);
+
+        return mergedSet;
+    }
+
     @Override
     public User create(UserDTO userDTO) {
 

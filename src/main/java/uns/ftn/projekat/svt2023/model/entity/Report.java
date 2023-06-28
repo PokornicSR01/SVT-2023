@@ -21,7 +21,7 @@ public class Report {
     private LocalDateTime timeStamp;
     @Column
     private Boolean accepted;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User belongsTo;
 

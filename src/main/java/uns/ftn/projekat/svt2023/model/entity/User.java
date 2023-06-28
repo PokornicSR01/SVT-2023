@@ -38,10 +38,10 @@ public class User {
     private Set<Post> posts;
     @ManyToMany
     @JsonIgnore
-    private Set<Group> groups;
-    @ManyToMany
-    @JsonIgnore
     private Set<Group> adminOfGroups;
+    @OneToMany
+    @JsonIgnore
+    private Set<FriendRequest> friendRequests;
 //    @OneToMany(fetch = FetchType.LAZY)
 //    private Set<Reaction> reactions = new HashSet<Reaction>();
 //    @OneToMany(fetch = FetchType.LAZY)

@@ -20,7 +20,6 @@ public class Post {
     @Column
     private LocalDateTime creationDate;
     @ManyToOne
-    @JsonIgnore
     private User user;
     @ManyToOne
     @JsonIgnore

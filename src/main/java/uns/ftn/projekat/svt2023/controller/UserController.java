@@ -36,6 +36,7 @@ public class UserController
     PostService postService;
     ReactionService reactionService;
     GroupRequestService groupRequestService;
+    FriendRequestService friendRequestService;
     UserDetailsService userDetailsService;
     AuthenticationManager authenticationManager;
     TokenUtils tokenUtils;
@@ -45,7 +46,7 @@ public class UserController
     public UserController(UserServiceImpl userService, AuthenticationManager authenticationManager,
                           UserDetailsService userDetailsService, TokenUtils tokenUtils, PasswordEncoder encoder,
                           GroupService groupService, PostService postService, ReactionService reactionService,
-                          GroupRequestService groupRequestService){
+                          GroupRequestService groupRequestService, FriendRequestService friendRequestService){
         this.userService = userService;
         this.groupService = groupService;
         this.authenticationManager = authenticationManager;
@@ -55,6 +56,7 @@ public class UserController
         this.postService = postService;
         this.reactionService = reactionService;
         this.groupRequestService = groupRequestService;
+        this.friendRequestService = friendRequestService;
     }
 
     @PostMapping("/signup")
@@ -101,7 +103,8 @@ public class UserController
     @PutMapping("/changePassword")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<UserDTO> changePassword (@RequestBody @Validated PasswordDTO passwords) {
-        User foundUser = userService.findByUsername(passwords.getUsername());
+        Authentication a = SecurityContextHolder.getContext().getAuthentication();
+        User foundUser = userService.findByUsername(a.getName());
 
         if(encoder.matches(passwords.getCurrent(), foundUser.getPassword()) && passwords.getConfirm().equals(passwords.getPassword())){
             foundUser.setPassword(encoder.encode(passwords.getPassword()));
@@ -133,6 +136,7 @@ public class UserController
         return postService.findUserPosts(user);
     }
 
+    //ne radi
     @GetMapping("/{userId}/groups")
     public Set<Group> getUserGroups(@PathVariable Integer userId) {
         return groupService.findUserGroups(userId);
@@ -176,10 +180,35 @@ public class UserController
         groupService.save(group);
     }
 
+    @GetMapping("/search")
+    public Set<User> approveGroupRequest(@RequestParam String name) {
+        return userService.searchUsersByName(name);
+    }
+
     @PostMapping("/{userId}/groups/{groupId}/request/{requestId}/decline")
     public void declineGroupRequest(@PathVariable Integer userId,
                                     @PathVariable Integer groupId,
                                     @PathVariable Integer requestId) {
         groupRequestService.declineRequest(requestId);
+    }
+
+    @PostMapping("/{to}/add")
+    public void sendFriendRequest(@PathVariable Integer to) {
+        friendRequestService.create(to);
+    }
+
+    @PostMapping("/{friendRequestId}/approve")
+    public void approveFriendRequest(@PathVariable Integer friendRequestId) {
+        friendRequestService.approveFriendRequest(friendRequestId);
+    }
+
+    @PostMapping("/{friendRequestId}/decline")
+    public void declineFriendRequest(@PathVariable Integer friendRequestId) {
+        friendRequestService.declineFriendRequest(friendRequestId);
+    }
+
+    @GetMapping("/friends/all")
+    public Set<User> getAllFriends() {
+        return userService.getAllFriends();
     }
 }

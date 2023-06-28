@@ -29,9 +29,6 @@ public class Group {
     @ManyToMany
     @JsonIgnore
     private Set<User> admins;
-    @ManyToMany
-    @JsonIgnore
-    private Set<User> members;
     @OneToMany(fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Post> posts;

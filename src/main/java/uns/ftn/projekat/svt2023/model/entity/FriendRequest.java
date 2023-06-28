@@ -20,6 +20,10 @@ public class FriendRequest {
     private LocalDateTime createdAt;
     @Column
     private LocalDateTime at;
+    @ManyToOne
+    private User fromUser;
+    @ManyToOne
+    private User toUser;
 
     public FriendRequest(Integer id, Boolean approved, LocalDateTime createdAt, LocalDateTime at) {
         this.id = id;

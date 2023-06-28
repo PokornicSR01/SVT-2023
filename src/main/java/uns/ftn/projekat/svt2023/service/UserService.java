@@ -12,4 +12,7 @@ public interface UserService {
     List<User> findAll();
     User findOne(Integer id);
     User findByUsername(String username);
+    Set<User> searchUsersByName(String name);
+    User returnLoggedUser();
+    Set<User> getAllFriends();
 }

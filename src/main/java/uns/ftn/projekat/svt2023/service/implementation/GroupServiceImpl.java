@@ -22,8 +22,6 @@ public class GroupServiceImpl implements GroupService {
     public Group create(GroupDTO groupDTO, User groupOwner) {
         Set<User> admins = new HashSet<User>();
         admins.add(groupOwner);
-        Set<User> members = new HashSet<User>();
-        members.add(groupOwner);
 
         Group newGroup = new Group();
         newGroup.setCreationDate(LocalDateTime.now());
@@ -33,7 +31,6 @@ public class GroupServiceImpl implements GroupService {
         newGroup.setIsSuspended(groupDTO.getIsSuspended());
         newGroup.setSuspendedReason("");
         newGroup.setAdmins(admins);
-        newGroup.setMembers(members);
         newGroup = groupRepository.save(newGroup);
 
         return newGroup;
