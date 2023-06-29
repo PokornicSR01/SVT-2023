@@ -12,20 +12,20 @@ import uns.ftn.projekat.svt2023.service.*;
 
 import java.time.*;
 import java.util.*;
+import java.util.concurrent.*;
 
 @RestController
 @RequestMapping("api/posts")
 public class PostController {
 
     PostService postService;
-    UserService userService;
-    GroupService groupService;
+    CommentService commentService;
+
 
     @Autowired
-    public PostController(PostService postService, UserService userService, GroupService groupService) {
+    public PostController(PostService postService, CommentService commentService) {
         this.postService = postService;
-        this.userService = userService;
-        this.groupService = groupService;
+        this.commentService = commentService;
     }
 
     @PostMapping("/create")
@@ -68,6 +68,12 @@ public class PostController {
     @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN')")
     public List<Post> loadAll() {
-        return this.postService.findAll();
+        return postService.findAll();
+    }
+
+    @GetMapping("/{postId}/comments")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public Set<Comment> getAllPostComments(@PathVariable Integer postId) {
+        return commentService.getAllPostComments(postId);
     }
 }

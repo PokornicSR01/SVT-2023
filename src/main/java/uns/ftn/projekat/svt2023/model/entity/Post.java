@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.*;
+import java.util.*;
 
 @Entity
 @Table(name = "post")
@@ -24,6 +25,9 @@ public class Post {
     @ManyToOne
     @JsonIgnore
     private Group group;
+    @OneToMany
+    @JsonIgnore
+    private Set<Comment> comments;
 
     public Post(Integer id, String content, LocalDateTime creationDate) {
         this.id = id;

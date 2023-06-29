@@ -1,6 +1,7 @@
 package uns.ftn.projekat.svt2023.model.entity;
 
 
+import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 
 import javax.persistence.*;
@@ -22,9 +23,15 @@ public class Comment {
     private LocalDateTime timeStamp;
     @Column
     private Boolean isDeleted;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
-    private User belongsTo;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private User belongsToUser;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Post belongsToPost;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Comment repliesToComment;
 
     public Comment(Integer id, String text, LocalDateTime timeStamp, Boolean isDeleted) {
         this.id = id;

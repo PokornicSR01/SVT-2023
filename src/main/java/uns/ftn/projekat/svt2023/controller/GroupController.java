@@ -107,7 +107,6 @@ public class GroupController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Set<GroupRequest> getGroupRequests(@PathVariable Integer groupId) {return groupService.getAllGroupRequests(groupId);}
 
-    //proveriti
     @PostMapping("/{groupId}/ban")
     @PreAuthorize("hasRole('ADMIN')")
     public void banGroup(@PathVariable Integer groupId) {
