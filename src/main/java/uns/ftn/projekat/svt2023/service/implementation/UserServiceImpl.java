@@ -143,8 +143,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void save(User user) {
-        userRepository.save(user);
+    public User edit(UserDTO userDTO) {
+        User user = this.returnLoggedUser();
+
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+
+        user = this.save(user);
+
+        return user;
+    }
+
+    @Override
+    public User save(User user) {
+        return userRepository.save(user);
     }
 
     @Override

@@ -9,7 +9,8 @@ import java.util.*;
 
 public interface UserService {
     User create(UserDTO userDTO);
-    void save(User user);
+    User edit(UserDTO userDTO);
+    User save(User user);
     void delete(Integer id);
     List<User> getAll();
     User findOne(Integer id);

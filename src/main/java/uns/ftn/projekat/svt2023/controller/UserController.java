@@ -46,7 +46,7 @@ public class UserController
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<UserDTO> create (@RequestBody @Validated UserDTO newUser) {
+    public ResponseEntity<UserDTO> create(@RequestBody @Validated UserDTO newUser) {
         User createdUser = userService.create(newUser);
 
         if(createdUser == null) {
@@ -65,7 +65,7 @@ public class UserController
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
         User user = userService.findOne(id);
 
         if(user != null) {
@@ -76,6 +76,21 @@ public class UserController
         }
 
     }
+
+    @PutMapping()
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<UserDTO> edit(@RequestBody UserDTO editUserDTO) {
+        User user = userService.edit(editUserDTO);
+
+        if(user == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        UserDTO userDTO = new UserDTO(user);
+
+        return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
+    }
+
 
     @PutMapping("/changePassword")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
