@@ -39,6 +39,21 @@ public class CommentController {
     public void delete(@PathVariable Integer id) {
         Comment deletedComment = commentService.delete(id);
     }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<CommentDTO> edit(@PathVariable Integer id, CommentDTO editedComment) {
+        Comment comment = commentService.edit(editedComment, id);
+
+        if(editedComment == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        CommentDTO commentDTO = new CommentDTO(comment);
+
+        return new ResponseEntity<>(commentDTO, HttpStatus.CREATED);
+    }
+
     @PostMapping("/{commentId}/reply")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<CommentDTO> reply(@RequestBody CommentDTO newComment, @PathVariable Integer commentId){
@@ -58,6 +73,5 @@ public class CommentController {
     public Set<Comment> commentReplies(@PathVariable Integer commentId) {
         return commentService.getAllCommentReplies(commentId);
     }
-
 
 }
