@@ -44,8 +44,18 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    public Comment edit(CommentDTO commentDTO, Integer commentId) {
+        Comment comment = this.findOne(commentId);
+
+        comment.setText(commentDTO.getText());
+        comment = this.save(comment);
+
+        return comment;
+    }
+
+    @Override
     public Comment save(Comment comment) {
-        return null;
+        return commentRepository.save(comment);
     }
 
     @Override

@@ -8,6 +8,7 @@ import java.util.*;
 public interface CommentService {
 
     Comment create(CommentDTO commentDTO, Integer postId, Integer commentId);
+    Comment edit(CommentDTO commentDTO, Integer commentId);
     Comment save(Comment comment);
     Comment delete(Integer id);
     Set<Comment> getAllPostComments(Integer postId);
