@@ -85,8 +85,15 @@ public class GroupController {
     }
 
     @GetMapping("/all")
-    @PreAuthorize("hasRole('ADMIN')")
-    public List<Group> loadAll() {return this.groupService.findAll();}
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public Set<Group> loadAll() {return this.groupService.getAllActiveGroups();}
+
+    @GetMapping("/{groupId}")
+    public GroupDTO getGroup(@PathVariable Integer groupId) {
+        Group group = groupService.findOne(groupId);
+        GroupDTO groupDTO = new GroupDTO(group);
+        return groupDTO;
+    }
 
     @PostMapping("/{groupId}/posts")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
@@ -101,17 +108,23 @@ public class GroupController {
         return new ResponseEntity<>(newPost, HttpStatus.CREATED);
     }
 
-    //ne radi
-    //proveriti
     @GetMapping("/{groupId}/requests")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Set<GroupRequest> getGroupRequests(@PathVariable Integer groupId) {return groupService.getAllGroupRequests(groupId);}
-
-    //proveriti
-    @PostMapping("/{groupId}/ban")
+    
+    @PostMapping("/{groupId}/suspend")
     @PreAuthorize("hasRole('ADMIN')")
-    public void banGroup(@PathVariable Integer groupId) {
-        groupService.banGroup(groupId);
+    public ResponseEntity<SuspendDTO> banGroup(@PathVariable Integer groupId, @RequestBody SuspendDTO suspendDTO) {
+        String suspendReason = suspendDTO.getDescription();
+        Group group = groupService.suspendGroup(groupId, suspendReason);
+        SuspendDTO returnSuspendDTO = new SuspendDTO(group);
+
+        if(returnSuspendDTO == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        return new ResponseEntity<>(returnSuspendDTO, HttpStatus.CREATED);
+
     }
 
 }

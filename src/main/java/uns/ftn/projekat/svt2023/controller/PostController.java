@@ -65,8 +65,22 @@ public class PostController {
         return post;
     }
 
+    @GetMapping("/{postId}/comments")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public Set<Comment> getPostComments(@PathVariable Integer postId) {
+        Post post = postService.findOne(postId);
+        return null;
+    }
+
+    @GetMapping("/{commentId}/replies")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public Set<Comment> getCommentReplies(@PathVariable Integer commentId) {
+        
+        return null;
+    }
+
     @GetMapping("/all")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public List<Post> loadAll() {
         return this.postService.findAll();
     }

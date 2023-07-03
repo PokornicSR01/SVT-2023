@@ -35,7 +35,7 @@ public class GroupRequestServiceImpl implements GroupRequestService {
 
         groupRequest.setGroup(group);
         groupRequest.setUser(user);
-        groupRequest.setApproved(false);
+        groupRequest.setApproved(null);
         groupRequest.setCreated(LocalDateTime.now());
 
         return groupRequestRepository.save(groupRequest);
