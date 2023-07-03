@@ -12,4 +12,5 @@ import java.util.*;
 public interface PostRepository extends JpaRepository<Post, Integer> {
     List<Post> findByUser(User user);
     List<Post> findByGroup(Group group);
+
 }

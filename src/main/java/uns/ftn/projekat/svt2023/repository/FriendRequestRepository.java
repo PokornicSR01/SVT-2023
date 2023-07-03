@@ -11,7 +11,7 @@ import java.util.*;
 @Transactional
 public interface FriendRequestRepository extends JpaRepository<FriendRequest, Integer> {
 
-    @Query(value = "SELECT r FROM FriendRequest r WHERE r.toUser.id = :userId")
+    @Query(value = "SELECT r FROM FriendRequest r WHERE r.approved = null AND r.toUser.id = :userId")
     Set<FriendRequest> getAllUserFriendRequests(Integer userId);
 
     @Modifying

@@ -30,6 +30,8 @@ public class User {
     @Column(nullable = false)
     private String lastName;
     @Column(nullable = false)
+    private String description;
+    @Column(nullable = false)
     private Roles role;
     @Column
     private LocalDateTime lastLogin;

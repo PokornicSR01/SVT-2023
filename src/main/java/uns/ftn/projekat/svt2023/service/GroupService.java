@@ -11,12 +11,12 @@ public interface GroupService {
     Group save(Group group);
     Optional<Group> delete(Integer id);
     Group findOne(Integer id);
-    List<Group> findAll();
+    Set<Group> getAllActiveGroups();
     Set<User> getAllGroupMembers(Integer id);
     Set<User> getAllGroupAdmins(Integer id);
     Set<Post> getAllGroupPosts(Integer id);
     Set<GroupRequest> getAllGroupRequests(Integer id);
     Set<Group> findUserGroups(Integer userId);
-    void banGroup(Integer groupId);
+    Group suspendGroup(Integer groupId, String suspendReason);
     void addAdminToGroup(Integer groupId, Integer userId);
 }

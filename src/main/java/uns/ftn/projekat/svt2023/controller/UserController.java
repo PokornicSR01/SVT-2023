@@ -57,6 +57,33 @@ public class UserController
         return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
     }
 
+    @PostMapping("/changeProfile")
+    public ResponseEntity<UserProfileDTO> changeProfile(@RequestBody @Validated UserProfileDTO newUserData) {
+        User changedUser = userService.changeProfile(newUserData);
+
+        if(changedUser == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
+        }
+        UserProfileDTO userDTO = new UserProfileDTO(changedUser);
+
+        return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{userUsername}/profile")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<UserDTO> getUserProfile(@PathVariable String userUsername) {
+
+        User user = userService.findByUsername(userUsername);
+
+        if(user == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        UserDTO userDTO = new UserDTO(user);
+
+        return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<UserTokenState> createAuthenticationToken(
             @RequestBody JwtAuthenticationRequest authenticationRequest, HttpServletResponse response){
@@ -134,11 +161,16 @@ public class UserController
         return new ResponseEntity<>(reactionDTO, HttpStatus.CREATED);
     }
 
-    @GetMapping("/friends/all")
+    @GetMapping("/{userId}/friends")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public Set<User> getAllFriends() {
-        return userService.getAllFriends();
+    public Set<User> getAllFriends(@PathVariable Integer userId) {
+        return userService.getAllFriends(userId);
     }
+
+    @GetMapping("/{userId}/requests")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public Set<FriendRequest> getUserRequests(@PathVariable Integer userId) {return userService.getAllUserFriendRequests(userId);}
+
 
     @GetMapping("/search")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")

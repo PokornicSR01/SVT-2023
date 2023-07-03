@@ -66,10 +66,10 @@ public class GroupServiceImpl implements GroupService {
     public Group findOne(Integer id) {return groupRepository.findById(id).orElseGet(null);}
 
     @Override
-    public List<Group> findAll() {return groupRepository.findAll();}
+    public Set<Group> getAllActiveGroups() {return groupRepository.getAllGroupActiveGroups();}
 
     @Override
-    public Set<User> getAllGroupMembers(Integer id) {return groupRepository.getAllGroupMemebrs(id);}
+    public Set<User> getAllGroupMembers(Integer id) {return groupRepository.getAllGroupMembers(id);}
 
     @Override
     public Set<User> getAllGroupAdmins(Integer id) {return groupRepository.getAllGroupAdmins(id);}
@@ -84,7 +84,17 @@ public class GroupServiceImpl implements GroupService {
     public Set<Group> findUserGroups(Integer userId) {return groupRepository.getAllUserGroups(userId);}
 
     @Override
-    public void banGroup(Integer groupId) {groupRepository.banGroup(groupId);}
+    public Group suspendGroup(Integer groupId, String suspendReason) {
+        groupRepository.suspendGroup(groupId, suspendReason);
+
+        Set<User> emptySet = new HashSet<>();
+
+        Group group = this.findOne(groupId);
+        group.setAdmins(emptySet);
+        group = groupRepository.save(group);
+
+        return group;
+    }
 
     @Override
     public void addAdminToGroup(Integer groupId, Integer userId) {

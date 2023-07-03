@@ -28,6 +28,9 @@ public class UserServiceImpl implements UserService {
     private PostRepository postRepository;
     @Autowired
     @Lazy
+    private FriendRequestRepository friendRequestRepository;
+    @Autowired
+    @Lazy
     private GroupService groupService;
     @Autowired
     @Lazy
@@ -65,8 +68,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Set<User> getAllFriends() {
-        User user = this.returnLoggedUser();
+    public Set<User> getAllFriends(Integer userId) {
+        User user = this.findOne(userId);
 
         Set<User> firstSet = userRepository.getAllFriends(user.getId());
         Set<User> secondSet = userRepository.getAllFriends1(user.getId());
@@ -122,6 +125,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Set<FriendRequest> getAllUserFriendRequests(Integer userId) {
+        return friendRequestRepository.getAllUserFriendRequests(userId);
+    }
+
+    @Override
     public User create(UserDTO userDTO) {
 
         Optional<User> user = userRepository.findFirstByUsername(userDTO.getUsername());
@@ -137,12 +145,14 @@ public class UserServiceImpl implements UserService {
         newUser.setFirstName(userDTO.getFirstName());
         newUser.setLastName(userDTO.getLastName());
         newUser.setRole(Roles.USER);
+        newUser.setDescription("");
         newUser = userRepository.save(newUser);
 
         return newUser;
     }
 
     @Override
+<<<<<<< HEAD
     public User edit(UserDTO userDTO) {
         User user = this.returnLoggedUser();
 
@@ -150,13 +160,28 @@ public class UserServiceImpl implements UserService {
         user.setLastName(userDTO.getLastName());
 
         user = this.save(user);
+=======
+    public User changeProfile(UserProfileDTO userProfileDTO) {
+        User user = this.returnLoggedUser();
+
+        user.setLastName(userProfileDTO.getLastName());
+        user.setFirstName(userProfileDTO.getFirstName());
+        user.setDescription(userProfileDTO.getDescription());
+
+        user = userRepository.save(user);
+>>>>>>> feature/fix
 
         return user;
     }
 
     @Override
+<<<<<<< HEAD
     public User save(User user) {
         return userRepository.save(user);
+=======
+    public void save(User user) {
+        userRepository.save(user);
+>>>>>>> feature/fix
     }
 
     @Override
