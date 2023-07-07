@@ -58,25 +58,10 @@ public class PostController {
         return  new ResponseEntity<>(postDTO, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{postId}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public Post getPost(@PathVariable Integer postId) {
-        Post post = postService.findOne(postId);
-        return post;
-    }
-
-    @GetMapping("/{postId}/comments")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public Set<Comment> getPostComments(@PathVariable Integer postId) {
-        Post post = postService.findOne(postId);
-        return null;
-    }
-
     @GetMapping("/{commentId}/replies")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Set<Comment> getCommentReplies(@PathVariable Integer commentId) {
-        
-        return null;
+        return commentService.getAllCommentReplies(commentId);
     }
 
     @GetMapping("/all")

@@ -3,6 +3,7 @@ package uns.ftn.projekat.svt2023.controller;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.*;
+import org.springframework.validation.annotation.*;
 import org.springframework.web.bind.annotation.*;
 import uns.ftn.projekat.svt2023.model.dto.*;
 import uns.ftn.projekat.svt2023.model.entity.*;
@@ -23,7 +24,7 @@ public class CommentController {
 
     @PostMapping("/{postId}/create")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<CommentDTO> create(@RequestBody CommentDTO newComment, @PathVariable Integer postId){
+    public ResponseEntity<CommentDTO> create(@RequestBody @Validated CommentDTO newComment, @PathVariable Integer postId){
         Comment createdComment = commentService.create(newComment, postId, null);
 
         if(createdComment == null) {
@@ -56,7 +57,7 @@ public class CommentController {
 
     @PostMapping("/{commentId}/reply")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<CommentDTO> reply(@RequestBody CommentDTO newComment, @PathVariable Integer commentId){
+    public ResponseEntity<CommentDTO> reply(@RequestBody @Validated CommentDTO newComment, @PathVariable Integer commentId){
         Comment createdComment = commentService.reply(newComment, commentId);
 
         if(createdComment == null) {

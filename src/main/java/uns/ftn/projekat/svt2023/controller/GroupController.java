@@ -111,13 +111,8 @@ public class GroupController {
     @GetMapping("/{groupId}/requests")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Set<GroupRequest> getGroupRequests(@PathVariable Integer groupId) {return groupService.getAllGroupRequests(groupId);}
-<<<<<<< HEAD
-
-    @PostMapping("/{groupId}/ban")
-=======
     
     @PostMapping("/{groupId}/suspend")
->>>>>>> feature/fix
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SuspendDTO> banGroup(@PathVariable Integer groupId, @RequestBody SuspendDTO suspendDTO) {
         String suspendReason = suspendDTO.getDescription();

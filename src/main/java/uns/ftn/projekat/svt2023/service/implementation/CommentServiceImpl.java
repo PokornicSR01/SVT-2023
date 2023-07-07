@@ -26,7 +26,7 @@ public class CommentServiceImpl implements CommentService {
         Post post = postService.findOne(postId);
 
         Comment comment = new Comment();
-        comment.setText(commentDTO.getText());
+        comment.setText(commentDTO.getCommentText());
         comment.setId(commentDTO.getId());
         comment.setTimeStamp(LocalDateTime.now());
         comment.setBelongsToUser(user);
@@ -47,7 +47,7 @@ public class CommentServiceImpl implements CommentService {
     public Comment edit(CommentDTO commentDTO, Integer commentId) {
         Comment comment = this.findOne(commentId);
 
-        comment.setText(commentDTO.getText());
+        comment.setText(commentDTO.getCommentText());
         comment = this.save(comment);
 
         return comment;

@@ -120,6 +120,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Set<Post> getNonGroupPosts() {
+        return userRepository.getNonGroupPosts();
+    }
+
+    @Override
     public Set<Group> getUserGroups(Integer userId) {
         return groupService.findUserGroups(userId);
     }
@@ -152,15 +157,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-<<<<<<< HEAD
     public User edit(UserDTO userDTO) {
-        User user = this.returnLoggedUser();
+        return null;
+    }
 
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-
-        user = this.save(user);
-=======
+    @Override
     public User changeProfile(UserProfileDTO userProfileDTO) {
         User user = this.returnLoggedUser();
 
@@ -169,19 +170,13 @@ public class UserServiceImpl implements UserService {
         user.setDescription(userProfileDTO.getDescription());
 
         user = userRepository.save(user);
->>>>>>> feature/fix
 
         return user;
     }
 
     @Override
-<<<<<<< HEAD
     public User save(User user) {
         return userRepository.save(user);
-=======
-    public void save(User user) {
-        userRepository.save(user);
->>>>>>> feature/fix
     }
 
     @Override

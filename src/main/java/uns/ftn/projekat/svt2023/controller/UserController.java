@@ -84,6 +84,21 @@ public class UserController
         return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
     }
 
+    @GetMapping("/{userId}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<UserDTO> getUser(@PathVariable Integer userId) {
+
+        User user = userService.findOne(userId);
+
+        if(user == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        UserDTO userDTO = new UserDTO(user);
+
+        return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<UserTokenState> createAuthenticationToken(
             @RequestBody JwtAuthenticationRequest authenticationRequest, HttpServletResponse response){
@@ -118,7 +133,6 @@ public class UserController
         return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
     }
 
-
     @PutMapping("/changePassword")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<UserDTO> changePassword (@RequestBody @Validated PasswordDTO passwords) {
@@ -141,6 +155,12 @@ public class UserController
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public List<Post> getUserPosts(@PathVariable Integer userId) {
         return userService.getUserPosts(userId);
+    }
+
+    @GetMapping("/posts")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public Set<Post> getNonGoupPosts() {
+        return userService.getNonGroupPosts();
     }
 
     @GetMapping("/{userId}/groups")
@@ -171,10 +191,9 @@ public class UserController
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Set<FriendRequest> getUserRequests(@PathVariable Integer userId) {return userService.getAllUserFriendRequests(userId);}
 
-
-    @GetMapping("/search")
+    @GetMapping("/")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public Set<User> approveGroupRequest(@RequestParam String name) {
+    public Set<User> searchUser(@RequestParam String name) {
         return userService.searchUsersByName(name);
     }
 }
